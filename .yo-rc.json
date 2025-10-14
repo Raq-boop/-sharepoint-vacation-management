@@ -1,0 +1,18 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "22.17.1",
+    "sdksVersions": {},
+    "version": "1.21.1",
+    "libraryName": "reactjs-sharepoint",
+    "libraryId": "2adf010c-519d-45ea-ae3d-dfc872ac5d69",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "reactjsSharepoint",
+    "solutionShortDescription": "reactjsSharepoint description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}
