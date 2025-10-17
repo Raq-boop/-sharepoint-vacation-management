@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "pedido-ferias",
   "version": "0.0.1",
   "private": true,
@@ -40,5 +41,39 @@
     "eslint-plugin-react-hooks": "4.3.0",
     "gulp": "^4.0.2",
     "typescript": "~5.3.3"
+=======
+  "name": "pedido-ferias-client-side-solution",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WebPart SPFx para gestão de pedidos de férias",
+  "scripts": {
+    "build": "gulp build",
+    "clean": "gulp clean",
+    "bundle": "gulp bundle",
+    "package-solution": "gulp package-solution",
+    "serve": "gulp serve"
+  },
+  "dependencies": {
+    "@fluentui/react": "8.120.0",
+    "@microsoft/sp-core-library": "1.18.2",
+    "@microsoft/sp-webpart-base": "1.18.2",
+    "@pnp/sp": "2.14.0",
+    "@pnp/spfx-controls-react": "3.13.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
+  },
+  "devDependencies": {
+    "@microsoft/sp-build-web": "1.18.2",
+    "@microsoft/sp-module-interfaces": "1.18.2",
+    "@microsoft/sp-webpart-workbench": "1.18.2",
+    "@types/react": "17.0.52",
+    "@types/react-dom": "17.0.17",
+    "gulp": "^4.0.2",
+    "typescript": "4.8.4"
+  },
+  "engines": {
+    "node": ">=16.13.0 <18.0.0",
+    "npm": ">=8.0.0"
+>>>>>>> ed49af9442b53acecaf6b7a0f33b49d4177ff268
   }
 }
