@@ -2,6 +2,7 @@ import * as React from 'react';
 import styles from './PedidoFerias.module.scss';
 import type { IPedidoFeriasProps } from './IPedidoFeriasProps';
 import { escape } from '@microsoft/sp-lodash-subset';
+import PnPExample from './PnPExample';
 
 export default class PedidoFerias extends React.Component<IPedidoFeriasProps> {
   public render(): React.ReactElement<IPedidoFeriasProps> {
@@ -36,6 +37,11 @@ export default class PedidoFerias extends React.Component<IPedidoFeriasProps> {
             <li><a href="https://aka.ms/spfx-yeoman-api" target="_blank" rel="noreferrer">SharePoint Framework API reference</a></li>
             <li><a href="https://aka.ms/m365pnp" target="_blank" rel="noreferrer">Microsoft 365 Developer Community</a></li>
           </ul>
+        </div>
+        
+        {/* Exemplo PnP JS */}
+        <div style={{ marginTop: '30px', borderTop: '2px solid #0078d4', paddingTop: '20px' }}>
+          <PnPExample {...this.props} />
         </div>
       </section>
     );
