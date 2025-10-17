@@ -5,15 +5,27 @@ import PnPService from '../services/PnPService';
 // Interface para o estado de loading
 interface LoadingState {
   isLoading: boolean;
-  error: string | null;
+  error: string | undefined;
 }
 
 // Hook personalizado para usar PnP de forma segura
-export const usePnP = (context: WebPartContext) => {
-  const [pnpService, setPnpService] = useState<PnPService | null>(null);
+export const usePnP = (context: WebPartContext): {
+  pnpService: PnPService | undefined;
+  isLoading: boolean;
+  error: string | undefined;
+  getLists: () => Promise<unknown[] | undefined>;
+  getListItems: (listTitle: string, select?: string[], filter?: string, top?: number) => Promise<unknown[] | undefined>;
+  createListItem: (listTitle: string, itemData: Record<string, unknown>) => Promise<unknown>;
+  updateListItem: (listTitle: string, itemId: number, itemData: Record<string, unknown>) => Promise<unknown>;
+  deleteListItem: (listTitle: string, itemId: number) => Promise<boolean | undefined>;
+  getCurrentUser: () => Promise<unknown>;
+  getCurrentWebInfo: () => Promise<unknown>;
+  executeOperation: <T>(operation: () => Promise<T>, errorMessage?: string) => Promise<T | undefined>;
+} => {
+  const [pnpService, setPnpService] = useState<PnPService | undefined>(undefined);
   const [loadingState, setLoadingState] = useState<LoadingState>({
     isLoading: false,
-    error: null
+    error: undefined
   });
 
   // Inicializa o serviço PnP
@@ -28,23 +40,23 @@ export const usePnP = (context: WebPartContext) => {
   const executeOperation = useCallback(async <T>(
     operation: () => Promise<T>,
     errorMessage: string = "Erro na operação"
-  ): Promise<T | null> => {
+  ): Promise<T | undefined> => {
     if (!pnpService) {
       console.warn('PnPService não foi inicializado');
-      return null;
+      return undefined;
     }
 
-    setLoadingState({ isLoading: true, error: null });
+    setLoadingState({ isLoading: true, error: undefined });
     
     try {
       const result = await operation();
-      setLoadingState({ isLoading: false, error: null });
+      setLoadingState({ isLoading: false, error: undefined });
       return result;
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       setLoadingState({ isLoading: false, error: `${errorMessage}: ${errorMsg}` });
       console.error(errorMessage, error);
-      return null;
+      return undefined;
     }
   }, [pnpService]);
 
@@ -70,7 +82,7 @@ export const usePnP = (context: WebPartContext) => {
   }, [executeOperation, pnpService]);
 
   // Método para criar item
-  const createListItem = useCallback(async (listTitle: string, itemData: any) => {
+  const createListItem = useCallback(async (listTitle: string, itemData: Record<string, unknown>) => {
     return executeOperation(
       async () => pnpService?.createListItem(listTitle, itemData),
       `Erro ao criar item na lista ${listTitle}`
@@ -78,7 +90,7 @@ export const usePnP = (context: WebPartContext) => {
   }, [executeOperation, pnpService]);
 
   // Método para atualizar item
-  const updateListItem = useCallback(async (listTitle: string, itemId: number, itemData: any) => {
+  const updateListItem = useCallback(async (listTitle: string, itemId: number, itemData: Record<string, unknown>) => {
     return executeOperation(
       async () => pnpService?.updateListItem(listTitle, itemId, itemData),
       `Erro ao atualizar item na lista ${listTitle}`

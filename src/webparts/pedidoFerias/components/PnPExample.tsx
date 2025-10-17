@@ -22,15 +22,8 @@ const PnPExample: React.FC<IPedidoFeriasProps> = (props) => {
   } = usePnP(props.context);
 
   const [lists, setLists] = useState<unknown[]>([]);
-  const [currentUser, setCurrentUser] = useState<unknown>(null);
-  const [webInfo, setWebInfo] = useState<unknown>(null);
-
-  // Carrega informações iniciais
-  useEffect(() => {
-    if (pnpService) {
-      void loadInitialData();
-    }
-  }, [pnpService]);
+  const [currentUser, setCurrentUser] = useState<unknown>(undefined);
+  const [webInfo, setWebInfo] = useState<unknown>(undefined);
 
   const loadInitialData = async (): Promise<void> => {
     try {
@@ -46,6 +39,13 @@ const PnPExample: React.FC<IPedidoFeriasProps> = (props) => {
       console.error('Erro ao carregar dados iniciais:', err);
     }
   };
+
+  // Carrega informações iniciais
+  useEffect(() => {
+    if (pnpService) {
+      loadInitialData().catch(console.error);
+    }
+  }, [pnpService, loadInitialData]);
 
   const handleLoadLists = async (): Promise<void> => {
     const listsData = await getLists();
