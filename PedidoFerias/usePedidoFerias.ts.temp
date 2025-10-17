@@ -7,8 +7,7 @@ import {
   IPedidoUpdate, 
   IPedidoFeriasFilters, 
   ISortConfig, 
-  IPedidoFeriasSearchResult,
-  EstadoPedido,
+
   IUserPermissions,
   IColaborador
 } from '../models/IPedidoFerias';
@@ -226,7 +225,7 @@ export const usePedidoFerias = (
             ? { 
                 ...pedido, 
                 Estado: update.Estado,
-                DataAprovacao: new Date(),
+                DataAprovacao: new Date().toISOString(),
                 AprovadoPor: { Id: currentUser.Id, Title: currentUser.Title },
                 Observacoes: update.Observacoes || pedido.Observacoes
               }
@@ -284,7 +283,7 @@ export const usePedidoFerias = (
   const setFilters = useCallback((filters: IPedidoFeriasFilters | null) => {
     updateState({ currentFilters: filters });
     // Auto-aplicar filtros
-    loadPedidos(filters, state.currentSort || undefined, 0);
+    void loadPedidos(filters || undefined, state.currentSort || undefined, 0);
   }, [loadPedidos, state.currentSort, updateState]);
 
   /**
@@ -293,7 +292,7 @@ export const usePedidoFerias = (
   const setSortConfig = useCallback((sortConfig: ISortConfig | null) => {
     updateState({ currentSort: sortConfig });
     // Auto-aplicar ordenação
-    loadPedidos(state.currentFilters || undefined, sortConfig, 0);
+    void loadPedidos(state.currentFilters || undefined, sortConfig || undefined, 0);
   }, [loadPedidos, state.currentFilters, updateState]);
 
   /**

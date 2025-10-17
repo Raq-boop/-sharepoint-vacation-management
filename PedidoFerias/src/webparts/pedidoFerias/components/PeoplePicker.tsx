@@ -12,7 +12,7 @@ import {
   PersonaSize,
   IconButton,
   mergeStyles,
-  ITextFieldProps,
+
   FocusTrapZone
 } from '@fluentui/react';
 import { IColaborador } from '../../../models/IPedidoFerias';
@@ -268,7 +268,7 @@ const PeoplePicker: React.FC<IPeoplePickerProps> = ({
       <Stack horizontal verticalAlign="center" tokens={{ childrenGap: 4 }}>
         <PersonaCoin
           text={user.Title}
-          size={PersonaSize.size20}
+          size={PersonaSize.size24}
         />
         <Text variant="small">{user.Title}</Text>
         {!disabled && (

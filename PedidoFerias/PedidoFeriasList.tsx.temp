@@ -21,7 +21,7 @@ import {
   DatePicker,
   Dropdown,
   IDropdownOption,
-  Label,
+
   Dialog,
   DialogFooter,
   DialogType
@@ -62,7 +62,7 @@ const PedidoFeriasList: React.FC<IPedidoFeriasListProps> = ({
     currentFilters,
     currentSort,
     userPermissions,
-    loadPedidos,
+    // loadPedidos,
     refreshPedidos,
     loadMorePedidos,
     updatePedidoStatus,

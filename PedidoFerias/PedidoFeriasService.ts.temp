@@ -13,7 +13,6 @@ import {
   IPedidoFeriasFilters, 
   ISortConfig, 
   IPedidoFeriasSearchResult,
-  EstadoPedido,
   IUserPermissions,
   IColaborador
 } from '../models/IPedidoFerias';
@@ -248,7 +247,8 @@ export class PedidoFeriasService {
         return true;
       },
       `Erro ao atualizar status do pedido ${id}`
-    ) || false;
+    );
+    return result ?? false;
   }
 
   /**
@@ -263,7 +263,7 @@ export class PedidoFeriasService {
         return true;
       },
       `Erro ao excluir pedido ${id}`
-    ) || false;
+    ) ?? false;
   }
 
   /**
@@ -273,7 +273,7 @@ export class PedidoFeriasService {
     return this.executeWithErrorHandling(
       async () => {
         const currentUser = await this._sp.web.currentUser();
-        const list = this._sp.web.lists.getByTitle(this._listTitle);
+        // const list = this._sp.web.lists.getByTitle(this._listTitle);
         
         // Verificar se é administrador ou tem permissões especiais
         const userGroups = await this._sp.web.currentUser.groups();
@@ -283,7 +283,7 @@ export class PedidoFeriasService {
         );
 
         // Verificar permissões na lista
-        const permissions = await list.getCurrentUserEffectivePermissions();
+        // const permissions = await list.getCurrentUserEffectivePermissions();
         
         return {
           canApprove: isAdmin || currentUser.IsSiteAdmin,
@@ -313,12 +313,14 @@ export class PedidoFeriasService {
           Id: user.Id,
           Title: user.Title,
           EMail: user.Email || '',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           JobTitle: (user as any).JobTitle || '',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           Department: (user as any).Department || ''
         }));
       },
       "Erro ao buscar colaboradores"
-    ) || [];
+    ) ?? [];
   }
 
   /**
@@ -351,12 +353,13 @@ export class PedidoFeriasService {
         }
       },
       "Erro ao verificar/criar lista"
-    ) || false;
+    ) ?? false;
   }
 
   /**
    * Criar campos customizados na lista
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async createListFields(list: any): Promise<void> {
     // Campo Colaborador (User)
     await list.fields.addUser("Colaborador", {
