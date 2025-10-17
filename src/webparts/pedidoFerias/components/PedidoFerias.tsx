@@ -3,6 +3,8 @@ import styles from './PedidoFerias.module.scss';
 import type { IPedidoFeriasProps } from './IPedidoFeriasProps';
 import { escape } from '@microsoft/sp-lodash-subset';
 import PnPExample from './PnPExample';
+import welcomeDark from '../assets/welcome-dark.png';
+import welcomeLight from '../assets/welcome-light.png';
 
 export default class PedidoFerias extends React.Component<IPedidoFeriasProps> {
   public render(): React.ReactElement<IPedidoFeriasProps> {
@@ -17,7 +19,7 @@ export default class PedidoFerias extends React.Component<IPedidoFeriasProps> {
     return (
       <section className={`${styles.pedidoFerias} ${hasTeamsContext ? styles.teams : ''}`}>
         <div className={styles.welcome}>
-          <img alt="" src={isDarkTheme ? require('../assets/welcome-dark.png') : require('../assets/welcome-light.png')} className={styles.welcomeImage} />
+          <img alt="" src={isDarkTheme ? welcomeDark : welcomeLight} className={styles.welcomeImage} />
           <h2>Well done, {escape(userDisplayName)}!</h2>
           <div>{environmentMessage}</div>
           <div>Web part property value: <strong>{escape(description)}</strong></div>
