@@ -2,7 +2,6 @@
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
     "name": "pedido-ferias-client-side-solution",
-<<<<<<< HEAD
     "id": "79c62b2a-f9bc-486a-9586-0ee8069f41ca",
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
@@ -34,13 +33,6 @@
         "version": "1.0.0.0"
       }
     ]
-=======
-    "id": "e1a54c2a-1a11-4aaf-b890-7ef34f4b3e9d",
-    "version": "1.0.0.0",
-    "includeClientSideAssets": true,
-    "skipFeatureDeployment": true,
-    "isDomainIsolated": false
->>>>>>> ed49af9442b53acecaf6b7a0f33b49d4177ff268
   },
   "paths": {
     "zippedPackage": "solution/pedido-ferias.sppkg"

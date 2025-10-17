@@ -16,8 +16,4 @@
     "PedidoFeriasWebPartStrings": "lib/webparts/pedidoFerias/loc/{locale}.js",
     "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> ed49af9442b53acecaf6b7a0f33b49d4177ff268

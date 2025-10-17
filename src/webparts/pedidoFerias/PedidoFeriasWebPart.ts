@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-<<<<<<< HEAD
 import { Version } from '@microsoft/sp-core-library';
 import {
   type IPropertyPaneConfiguration,
@@ -30,7 +29,8 @@ export default class PedidoFeriasWebPart extends BaseClientSideWebPart<IPedidoFe
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
-        userDisplayName: this.context.pageContext.user.displayName
+        userDisplayName: this.context.pageContext.user.displayName,
+        context: this.context
       }
     );
 
@@ -88,34 +88,11 @@ export default class PedidoFeriasWebPart extends BaseClientSideWebPart<IPedidoFe
       this.domElement.style.setProperty('--linkHovered', semanticColors.linkHovered || null);
     }
 
-=======
-import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
-import PedidoFerias from './components/PedidoFerias';
-import { IPedidoFeriasProps } from './components/IPedidoFeriasProps';
-import { spfi, SPFx } from "@pnp/sp";
-
-export default class PedidoFeriasWebPart extends BaseClientSideWebPart<{}> {
-
-  public onInit(): Promise<void> {
-    return super.onInit().then(_ => {
-      // Inicializa o contexto do PnPjs
-      spfi().using(SPFx(this.context));
-    });
-  }
-
-  public render(): void {
-    const element: React.ReactElement<IPedidoFeriasProps> = React.createElement(PedidoFerias, {
-      context: this.context
-    });
-
-    ReactDom.render(element, this.domElement);
->>>>>>> ed49af9442b53acecaf6b7a0f33b49d4177ff268
   }
 
   protected onDispose(): void {
     ReactDom.unmountComponentAtNode(this.domElement);
   }
-<<<<<<< HEAD
 
   protected get dataVersion(): Version {
     return Version.parse('1.0');
@@ -142,6 +119,4 @@ export default class PedidoFeriasWebPart extends BaseClientSideWebPart<{}> {
       ]
     };
   }
-=======
->>>>>>> ed49af9442b53acecaf6b7a0f33b49d4177ff268
 }

@@ -2,7 +2,6 @@
   "@microsoft/generator-sharepoint": {
     "plusBeta": false,
     "isCreatingSolution": true,
-<<<<<<< HEAD
     "nodeVersion": "22.20.0",
     "sdksVersions": {},
     "version": "1.21.1",
@@ -12,17 +11,6 @@
     "packageManager": "npm",
     "solutionName": "pedido-ferias",
     "solutionShortDescription": "pedido-ferias description",
-=======
-    "nodeVersion": "22.17.1",
-    "sdksVersions": {},
-    "version": "1.21.1",
-    "libraryName": "reactjs-sharepoint",
-    "libraryId": "2adf010c-519d-45ea-ae3d-dfc872ac5d69",
-    "environment": "spo",
-    "packageManager": "npm",
-    "solutionName": "reactjsSharepoint",
-    "solutionShortDescription": "reactjsSharepoint description",
->>>>>>> ed49af9442b53acecaf6b7a0f33b49d4177ff268
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
     "componentType": "webpart"

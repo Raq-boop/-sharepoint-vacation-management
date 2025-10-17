@@ -2,11 +2,5 @@
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/spfx-serve.schema.json",
   "port": 4321,
   "https": true,
-<<<<<<< HEAD
-  "initialPage": "https://{tenantDomain}/_layouts/workbench.aspx"
+  "initialPage": "https://{https://hnlcompany.sharepoint.com/_layouts/15/sharepoint.aspx?&login_hint=raquel@hnlcompany.onmicrosoft.com}/_layouts/workbench.aspx"
 }
-=======
-  "initialPage": "https://animaedu-my.sharepoint.com/personal/43322600823_ulife_com_br/Lists/Pedidos/AllItems.aspx?groupBy=Estado&env=WebViewList&npsAction=createList"
-}
-
->>>>>>> ed49af9442b53acecaf6b7a0f33b49d4177ff268
