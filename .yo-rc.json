@@ -1,0 +1,18 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "22.20.0",
+    "sdksVersions": {},
+    "version": "1.21.1",
+    "libraryName": "pedido-ferias",
+    "libraryId": "79c62b2a-f9bc-486a-9586-0ee8069f41ca",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "pedido-ferias",
+    "solutionShortDescription": "pedido-ferias description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}
