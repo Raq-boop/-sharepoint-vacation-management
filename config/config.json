@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "pedido-ferias-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/pedidoFerias/PedidoFeriasWebPart.js",
+          "manifest": "./src/webparts/pedidoFerias/PedidoFeriasWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "PedidoFeriasWebPartStrings": "lib/webparts/pedidoFerias/loc/{locale}.js"
+  }
+}
