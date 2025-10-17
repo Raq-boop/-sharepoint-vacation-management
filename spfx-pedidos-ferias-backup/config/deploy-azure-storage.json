@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/deploy-azure-storage.schema.json",
+  "workingDir": "./release/assets/",
+  "account": "<!-- STORAGE ACCOUNT NAME -->",
+<<<<<<< HEAD
+  "container": "pedido-ferias",
+=======
+  "container": "reactjs-sharepoint",
+>>>>>>> ed49af9442b53acecaf6b7a0f33b49d4177ff268
+  "accessKey": "<!-- ACCESS KEY -->"
+}
