@@ -33,7 +33,7 @@ WebPart avançada desenvolvida com **SharePoint Framework (SPFx)** para gerencia
 
 | Solução                    | Autor(es)                                    |
 | -------------------------- | -------------------------------------------- |
-| spfx-pedidos-ferias        | **Raquel Sampaio** - Especialista SPFx/React |
+| sharepoint-vacation-management | **Raphael Costa** - Especialista SPFx/React |
 
 ## 📈 Histórico de Versões
 
@@ -53,8 +53,8 @@ WebPart avançada desenvolvida com **SharePoint Framework (SPFx)** para gerencia
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/Raq-boop/spfx-pedidos-ferias.git
-cd spfx-pedidos-ferias
+git clone https://github.com/Raq-boop/sharepoint-vacation-management.git
+cd sharepoint-vacation-management
 
 # 2. Instale as dependências
 npm install
@@ -70,6 +70,12 @@ gulp serve --nobrowser
 ```
 
 > Inclua etapas adicionais conforme necessário, como configuração de permissões para Microsoft Graph ou criação da lista "PedidoFerias" no SharePoint.
+
+## 🔗 **Repositório Profissional**
+
+🎆 **Nome atualizado para**: `sharepoint-vacation-management`  
+🔗 **URL**: https://github.com/Raq-boop/sharepoint-vacation-management  
+🏢 **Descrição**: Enterprise vacation request management system built with SharePoint Framework, React, TypeScript, and Microsoft Graph API
 
 ## 🎯 Funcionalidades
 
@@ -163,6 +169,17 @@ Dropdown State  →         →        →                →
 - [Use Microsoft Graph in your solution](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/web-parts/get-started/using-microsoft-graph-apis)
 - [Publish SharePoint Framework applications to the Marketplace](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/publish-to-marketplace-overview)
 - [Microsoft 365 Patterns and Practices](https://aka.ms/m365pnp) - Guidance, tooling, samples and open-source controls for your Microsoft 365 development
+
+---
+
+## 🏆 **Por que este nome?**
+
+**`sharepoint-vacation-management`** foi escolhido por ser:
+- ✅ **Profissional**: Padrão enterprise reconhecido
+- ✅ **Descritivo**: Indica claramente tecnologia e funcionalidade  
+- ✅ **SEO-Friendly**: Palavras-chave relevantes para recrutadores
+- ✅ **Corporativo**: Transmite seriedade e maturidade técnica
+- ✅ **Descobrível**: Fácil localização em pesquisas GitHub
 
 ---
 
