@@ -159,7 +159,7 @@ export const PnPValidators = {
   // Valida se um campo contém informações sensíveis
   isSensitiveField: (fieldName: string): boolean => {
     return PnPConfig.security.sensitiveFields.some(sensitive => 
-      fieldName.toLowerCase().includes(sensitive.toLowerCase())
+      fieldName.toLowerCase().indexOf(sensitive.toLowerCase()) !== -1
     );
   },
 
@@ -172,9 +172,9 @@ export const PnPValidators = {
   isValidSharePointUrl: (url: string): boolean => {
     try {
       const urlObj = new URL(url);
-      return urlObj.hostname.includes('sharepoint.com') || 
-             urlObj.hostname.includes('.sharepoint.') ||
-             urlObj.hostname.includes('officeapps.live.com');
+      return urlObj.hostname.indexOf('sharepoint.com') !== -1 || 
+             urlObj.hostname.indexOf('.sharepoint.') !== -1 ||
+             urlObj.hostname.indexOf('officeapps.live.com') !== -1;
     } catch {
       return false;
     }

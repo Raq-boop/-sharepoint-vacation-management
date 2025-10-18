@@ -83,7 +83,7 @@ const PeoplePicker: React.FC<IPeoplePickerProps> = ({
   });
 
   // Debounce timer para busca
-  const searchTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+  const searchTimerRef = React.useRef<number | null>(null);
 
   /**
    * Atualizar estado local

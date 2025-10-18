@@ -4,7 +4,6 @@ import "@pnp/sp/lists";
 import "@pnp/sp/items";
 import "@pnp/sp/site-users";
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { Logger, LogLevel, PnPLogging } from "@pnp/logging";
 
 // Configuração de logging seguro
 const LOG_SOURCE = "PnPService";
@@ -14,7 +13,7 @@ export class PnPService {
 
   constructor(context: WebPartContext) {
     // Configuração do PnP JS com SPFx context de forma segura
-    this._sp = spfi().using(SPFx(context)).using(PnPLogging(LogLevel.Warning));
+    this._sp = spfi().using(SPFx(context));
   }
 
   /**
@@ -34,7 +33,7 @@ export class PnPService {
     try {
       return await operation();
     } catch (error) {
-      Logger.write(`${LOG_SOURCE} - ${errorMessage}: ${error}`, LogLevel.Error);
+      console.error(`${LOG_SOURCE} - ${errorMessage}:`, error);
       console.error(`${errorMessage}:`, error);
       return undefined;
     }
