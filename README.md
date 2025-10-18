@@ -1,19 +1,19 @@
-# 🏖️ Sistema de Pedidos de Férias - SPFx WebPart
+# 🏖️ Vacation Request Management System - SPFx WebPart
 
-## 📋 Resumo
+## 📋 Overview
 
-WebPart avançada desenvolvida com **SharePoint Framework (SPFx)** para gerenciamento completo de pedidos de férias corporativos. Integra **Microsoft Graph API** para exibição de fotos dos colaboradores, **Fluent UI** para interface moderna e **PnP JS** para operações SharePoint. Permite criar, visualizar, filtrar e aprovar/rejeitar solicitações de férias diretamente no SharePoint Online.
+Advanced SharePoint Framework (SPFx) WebPart for comprehensive corporate vacation request management. Integrates **Microsoft Graph API** for employee photo display, **Fluent UI** for modern interface, and **PnP JS** for SharePoint operations. Enables creating, viewing, filtering, and approving/rejecting vacation requests directly in SharePoint Online.
 
-![Interface do Sistema](https://img.shields.io/badge/Interface-Moderna-blue.svg)
+![Interface](https://img.shields.io/badge/Interface-Modern-blue.svg)
 
-## 🚀 Versão SharePoint Framework Utilizada
+## 🚀 Technology Stack
 
 ![version](https://img.shields.io/badge/SPFx-1.21.1-green.svg)
 ![react](https://img.shields.io/badge/React-17.0.1-blue.svg)
 ![typescript](https://img.shields.io/badge/TypeScript-5.3.3-blue.svg)
 ![node](https://img.shields.io/badge/Node.js-22.20.0-green.svg)
 
-## 🎯 Aplicação
+## 🎯 Requirements
 
 - [SharePoint Framework](https://aka.ms/spfx)
 - [Microsoft 365 tenant](https://docs.microsoft.com/en-us/sharepoint/dev/spfx/set-up-your-developer-tenant)
