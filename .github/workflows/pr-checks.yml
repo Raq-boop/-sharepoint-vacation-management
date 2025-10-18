@@ -1,0 +1,161 @@
+name: PR Quality Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  quality-gate:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch full history for better analysis
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Lint changes
+      run: |
+        # Get changed files
+        CHANGED_FILES=$(git diff --name-only origin/main...HEAD | grep -E '\.(ts|tsx)$' | tr '\n' ' ')
+        if [ ! -z "$CHANGED_FILES" ]; then
+          npx eslint $CHANGED_FILES
+        else
+          echo "No TypeScript files changed"
+        fi
+        
+    - name: Check formatting
+      run: npm run format:check
+      
+    - name: Run tests with coverage
+      run: npm run test:ci
+      
+    - name: Coverage comment
+      uses: romeovs/lcov-reporter-action@v0.3.1
+      with:
+        lcov-file: ./coverage/lcov.info
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        delete-old-comments: true
+        
+    - name: Check bundle size impact
+      run: |
+        # Build current branch
+        npm run build
+        CURRENT_SIZE=$(find temp -name "*.js" -exec wc -c {} + | tail -1 | awk '{print $1}')
+        
+        # Switch to main and build
+        git checkout origin/main
+        npm ci
+        npm run build
+        MAIN_SIZE=$(find temp -name "*.js" -exec wc -c {} + | tail -1 | awk '{print $1}')
+        
+        # Calculate difference
+        DIFF=$((CURRENT_SIZE - MAIN_SIZE))
+        DIFF_PERCENT=$(echo "scale=2; $DIFF * 100 / $MAIN_SIZE" | bc -l)
+        
+        echo "Bundle size impact: ${DIFF} bytes (${DIFF_PERCENT}%)"
+        
+        # Create comment if significant change
+        if [ $DIFF -gt 10000 ] || [ $DIFF -lt -10000 ]; then
+          echo "BUNDLE_SIZE_IMPACT=significant" >> $GITHUB_ENV
+          echo "BUNDLE_SIZE_DIFF=$DIFF" >> $GITHUB_ENV
+          echo "BUNDLE_SIZE_PERCENT=$DIFF_PERCENT" >> $GITHUB_ENV
+        fi
+        
+    - name: Comment bundle size impact
+      if: env.BUNDLE_SIZE_IMPACT == 'significant'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const diff = parseInt('${{ env.BUNDLE_SIZE_DIFF }}');
+          const percent = '${{ env.BUNDLE_SIZE_PERCENT }}';
+          const emoji = diff > 0 ? '📈' : '📉';
+          const action = diff > 0 ? 'increased' : 'decreased';
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `## Bundle Size Impact ${emoji}\n\nBundle size ${action} by **${Math.abs(diff).toLocaleString()} bytes** (${percent}%)\n\n${diff > 50000 ? '⚠️ Significant size increase detected. Please review.' : '✅ Acceptable size change.'}`
+          });
+          
+  accessibility:
+    name: Accessibility Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build solution
+      run: npm run build
+      
+    - name: Install axe-core
+      run: npm install -g @axe-core/cli
+      
+    - name: Run accessibility audit
+      run: |
+        # Start local server for testing
+        npm run serve &
+        SERVER_PID=$!
+        
+        # Wait for server
+        sleep 30
+        
+        # Run axe audit
+        axe http://localhost:4321/temp/workbench.html --reporter junit > axe-results.xml || true
+        
+        # Stop server
+        kill $SERVER_PID
+        
+    - name: Upload accessibility results
+      uses: actions/upload-artifact@v3
+      with:
+        name: accessibility-results
+        path: axe-results.xml
+        
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run Semgrep
+      uses: returntocorp/semgrep-action@v1
+      with:
+        config: >-
+          p/security-audit
+          p/secrets
+          p/typescript
+          
+    - name: Dependency vulnerability scan
+      run: |
+        npm audit --audit-level=moderate --json > audit-results.json || true
+        
+    - name: Upload security scan results
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-results
+        path: audit-results.json
