@@ -1,0 +1,109 @@
+COMANDOS PARA COPIAR E COLAR - CRIAÇÃO LISTA SHAREPOINT
+======================================================
+
+PASSO 1: CONECTAR
+-----------------
+Connect-PnPOnline -Url 'https://hnlcompany.sharepoint.com' -Interactive
+
+
+PASSO 2: CRIAR LISTA
+--------------------
+New-PnPList -Title 'Pedidos de Férias' -Template GenericList -EnableVersioning
+
+
+PASSO 3: AGUARDAR
+-----------------
+Start-Sleep -Seconds 3
+
+
+PASSO 4: ADICIONAR COLUNAS (Execute um por vez)
+----------------------------------------------
+
+Add-PnPField -List 'Pedidos de Férias' -DisplayName 'Colaborador' -InternalName 'Colaborador' -Type User -Required -AddToDefaultView
+
+Add-PnPField -List 'Pedidos de Férias' -DisplayName 'Data Início' -InternalName 'DataInicio' -Type DateTime -Required -AddToDefaultView
+
+Add-PnPField -List 'Pedidos de Férias' -DisplayName 'Data Fim' -InternalName 'DataFim' -Type DateTime -Required -AddToDefaultView
+
+Add-PnPField -List 'Pedidos de Férias' -DisplayName 'Dias Total' -InternalName 'DiasTotal' -Type Number -Required -AddToDefaultView
+
+Add-PnPField -List 'Pedidos de Férias' -DisplayName 'Motivo' -InternalName 'Motivo' -Type Note -AddToDefaultView
+
+$choiceXml = @"
+<Field Type="Choice" DisplayName="Estado" Required="TRUE" Format="Dropdown" StaticName="Estado" Name="Estado">
+    <CHOICES>
+        <CHOICE>Pendente</CHOICE>
+        <CHOICE>Aprovado</CHOICE>
+        <CHOICE>Rejeitado</CHOICE>
+        <CHOICE>Cancelado</CHOICE>
+    </CHOICES>
+    <Default>Pendente</Default>
+</Field>
+"@
+Add-PnPFieldFromXml -List "Pedidos de Férias" -FieldXml $choiceXml -AddToDefaultView
+
+Add-PnPField -List 'Pedidos de Férias' -DisplayName 'Data Solicitação' -InternalName 'DataSolicitacao' -Type DateTime -Required -AddToDefaultView
+
+Add-PnPField -List 'Pedidos de Férias' -DisplayName 'Aprovado Por' -InternalName 'AprovadoPor' -Type User
+
+Add-PnPField -List 'Pedidos de Férias' -DisplayName 'Data Aprovação' -InternalName 'DataAprovacao' -Type DateTime
+
+Add-PnPField -List 'Pedidos de Férias' -DisplayName 'Observações' -InternalName 'Observacoes' -Type Note
+
+
+PASSO 5: VERIFICAR
+------------------
+Get-PnPList -Identity 'Pedidos de Férias' | Select-Object Title, ItemCount
+
+
+PASSO 6: DADOS DE TESTE (Opcional - Execute todo o bloco)
+--------------------------------------------------------
+$currentUser = Get-PnPUser -Identity "raquel@hnlcompany.onmicrosoft.com"
+
+Add-PnPListItem -List "Pedidos de Férias" -Values @{
+    "Title" = "Férias de Verão - João Silva"
+    "Colaborador" = $currentUser.Id
+    "DataInicio" = "2025-07-01"
+    "DataFim" = "2025-07-15"
+    "DiasTotal" = 15
+    "Motivo" = "Férias de verão com a família"
+    "Estado" = "Pendente"
+    "DataSolicitacao" = "2025-06-15T10:00:00Z"
+}
+
+Add-PnPListItem -List "Pedidos de Férias" -Values @{
+    "Title" = "Férias de Natal - Maria Santos"
+    "Colaborador" = $currentUser.Id
+    "DataInicio" = "2025-12-20"
+    "DataFim" = "2025-12-30"
+    "DiasTotal" = 10
+    "Motivo" = "Festividades de fim de ano"
+    "Estado" = "Aprovado"
+    "DataSolicitacao" = "2025-11-01T14:30:00Z"
+    "AprovadoPor" = $currentUser.Id
+    "DataAprovacao" = "2025-11-05T09:15:00Z"
+    "Observacoes" = "Aprovado. Boas férias!"
+}
+
+Add-PnPListItem -List "Pedidos de Férias" -Values @{
+    "Title" = "Férias Rejeitadas - Pedro Costa"
+    "Colaborador" = $currentUser.Id
+    "DataInicio" = "2025-05-10"
+    "DataFim" = "2025-05-20"
+    "DiasTotal" = 10
+    "Motivo" = "Compromissos familiares urgentes"
+    "Estado" = "Rejeitado"
+    "DataSolicitacao" = "2025-04-25T16:45:00Z"
+    "AprovadoPor" = $currentUser.Id
+    "DataAprovacao" = "2025-04-28T11:20:00Z"
+    "Observacoes" = "Rejeitado. Período muito próximo ao fechamento do projeto."
+}
+
+
+PASSO 7: VERIFICAÇÃO FINAL
+--------------------------
+Get-PnPListItem -List "Pedidos de Férias" | Select-Object Id, @{Name="Título";Expression={$_.FieldValues.Title}}, @{Name="Estado";Expression={$_.FieldValues.Estado}}
+
+
+RESULTADO:
+URL da lista: https://hnlcompany.sharepoint.com/Lists/Pedidos%20de%20Ferias

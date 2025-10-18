@@ -153,7 +153,10 @@ const PeoplePicker: React.FC<IPeoplePickerProps> = ({
     // Iniciar nova busca com debounce
     if (searchText.length >= 2) {
       searchTimerRef.current = setTimeout(() => {
-        performSearch(searchText);
+        performSearch(searchText).catch(error => {
+          console.error('Erro na busca de colaboradores:', error);
+          updateState({ isSearching: false });
+        });
       }, 300);
     } else {
       updateState({ searchResults: [], isSearching: false });

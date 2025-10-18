@@ -1,0 +1,92 @@
+# 🎯 NOMES CORRETOS DAS COLUNAS - SEM ERRO NO SHAREPOINT
+# ======================================================
+
+# IMPORTANTE: Use estes nomes EXATOS para não dar erro!
+
+## 📋 LISTA: "Pedidos de Férias"
+
+## 🔧 COLUNAS COM NOMES CORRETOS:
+
+### 1. COLABORADOR
+- Nome de Exibição: "Colaborador" 
+- Nome Interno: "Colaborador"
+- Tipo: Pessoa ou Grupo
+- Obrigatório: SIM
+
+### 2. DATA INÍCIO  
+- Nome de Exibição: "Data Inicio" (SEM ACENTO!)
+- Nome Interno: "DataInicio" 
+- Tipo: Data e Hora
+- Obrigatório: SIM
+- Formato: Data apenas
+
+### 3. DATA FIM
+- Nome de Exibição: "Data Fim"
+- Nome Interno: "DataFim"
+- Tipo: Data e Hora  
+- Obrigatório: SIM
+- Formato: Data apenas
+
+### 4. DIAS TOTAL
+- Nome de Exibição: "Dias Total"
+- Nome Interno: "DiasTotal" 
+- Tipo: Número
+- Obrigatório: SIM
+- Decimais: 0
+
+### 5. MOTIVO
+- Nome de Exibição: "Motivo"
+- Nome Interno: "Motivo"
+- Tipo: Várias linhas de texto
+- Obrigatório: NÃO
+
+### 6. ESTADO  
+- Nome de Exibição: "Estado"
+- Nome Interno: "Estado"
+- Tipo: Escolha
+- Obrigatório: SIM
+- Opções: Pendente, Aprovado, Rejeitado, Cancelado
+- Padrão: Pendente
+
+### 7. DATA SOLICITAÇÃO
+- Nome de Exibição: "Data Solicitacao" (SEM ACENTO!)  
+- Nome Interno: "DataSolicitacao"
+- Tipo: Data e Hora
+- Obrigatório: SIM
+- Formato: Data e hora
+
+### 8. APROVADO POR
+- Nome de Exibição: "Aprovado Por"
+- Nome Interno: "AprovadoPor"
+- Tipo: Pessoa ou Grupo
+- Obrigatório: NÃO
+
+### 9. DATA APROVAÇÃO  
+- Nome de Exibição: "Data Aprovacao" (SEM ACENTO!)
+- Nome Interno: "DataAprovacao" 
+- Tipo: Data e Hora
+- Obrigatório: NÃO
+- Formato: Data e hora
+
+### 10. OBSERVAÇÕES
+- Nome de Exibição: "Observacoes" (SEM ACENTO!)
+- Nome Interno: "Observacoes"
+- Tipo: Várias linhas de texto
+- Obrigatório: NÃO
+
+# ⚠️  ATENÇÃO: 
+# - NÃO use acentos nos nomes das colunas (ã, ç, é, etc.)
+# - Use exatamente os nomes acima
+# - O código procura pelos nomes internos sem acentos
+
+# ✅ NOMES CORRETOS PARA COPIAR:
+# Colaborador
+# Data Inicio  
+# Data Fim
+# Dias Total
+# Motivo
+# Estado
+# Data Solicitacao
+# Aprovado Por  
+# Data Aprovacao
+# Observacoes
