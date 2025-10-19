@@ -1,0 +1,299 @@
+import { PnPService } from './PnPService';
+import { IPedidoFerias } from '../models/IPedidoFerias';
+import { sp } from '@pnp/sp/presets/all';
+
+// Mock do PnP
+jest.mock('@pnp/sp/presets/all');
+
+const mockSp = {
+  setup: jest.fn(),
+  web: {
+    lists: {
+      getByTitle: jest.fn(),
+      add: jest.fn()
+    }
+  }
+};
+
+(sp as any) = mockSp;
+
+describe('PnPService', () => {
+  let service: PnPService;
+  let mockContext: any;
+  let mockList: any;
+
+  beforeEach(() => {
+    service = new PnPService();
+    mockContext = {
+      pageContext: {
+        web: {
+          absoluteUrl: 'https://test.sharepoint.com/sites/test'
+        }
+      }
+    };
+
+    mockList = {
+      items: {
+        select: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        get: jest.fn(),
+        add: jest.fn(),
+        getById: jest.fn().mockReturnThis(),
+        update: jest.fn(),
+        delete: jest.fn()
+      },
+      fields: {
+        addText: jest.fn(),
+        addDateTime: jest.fn(),
+        addMultilineText: jest.fn(),
+        addChoice: jest.fn(),
+        addNumber: jest.fn()
+      }
+    };
+
+    mockSp.web.lists.getByTitle.mockReturnValue(mockList);
+    mockSp.web.lists.add.mockResolvedValue({ list: mockList });
+
+    jest.clearAllMocks();
+  });
+
+  describe('setup', () => {
+    it('deve configurar o PnP corretamente', () => {
+      expect(() => service.setup(mockContext)).not.toThrow();
+      expect(mockSp.setup).toHaveBeenCalledWith({
+        spfxContext: mockContext,
+        sp: {
+          baseUrl: 'https://test.sharepoint.com/sites/test'
+        }
+      });
+    });
+
+    it('deve lançar erro se a configuração falhar', () => {
+      mockSp.setup.mockImplementation(() => {
+        throw new Error('Erro de configuração');
+      });
+
+      expect(() => service.setup(mockContext)).toThrow('Falha na inicialização do serviço SharePoint');
+    });
+  });
+
+  describe('getPedidosFerias', () => {
+    const mockItems = [
+      {
+        Id: 1,
+        Colaborador: 'João Silva',
+        Email: 'joao@test.com',
+        DataInicio: '2025-07-01',
+        DataFim: '2025-07-15',
+        Motivo: 'Férias de verão',
+        Status: 'Pendente',
+        DiasFerias: 15,
+        Created: '2025-06-15T11:00:00Z'
+      }
+    ];
+
+    beforeEach(() => {
+      service.setup(mockContext);
+    });
+
+    it('deve buscar pedidos com sucesso', async () => {
+      mockList.items.get.mockResolvedValue(mockItems);
+
+      const result = await service.getPedidosFerias();
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        id: 1,
+        colaborador: 'João Silva',
+        email: 'joao@test.com',
+        status: 'Pendente'
+      });
+    });
+
+    it('deve selecionar campos corretos', async () => {
+      mockList.items.get.mockResolvedValue([]);
+
+      await service.getPedidosFerias();
+
+      expect(mockList.items.select).toHaveBeenCalledWith(
+        'Id',
+        'Title',
+        'Colaborador',
+        'Email', 
+        'DataInicio',
+        'DataFim',
+        'Motivo',
+        'Status',
+        'MotivoRejeicao',
+        'AprovadoPor',
+        'DataSolicitacao',
+        'DiasFerias',
+        'Created',
+        'Modified'
+      );
+    });
+
+    it('deve ordenar por data de criação descendente', async () => {
+      mockList.items.get.mockResolvedValue([]);
+
+      await service.getPedidosFerias();
+
+      expect(mockList.items.orderBy).toHaveBeenCalledWith('Created', false);
+    });
+
+    it('deve criar lista se não existir (erro 404)', async () => {
+      const notFoundError = new Error('Lista não encontrada') as any;
+      notFoundError.status = 404;
+      
+      mockList.items.get.mockRejectedValue(notFoundError);
+
+      const result = await service.getPedidosFerias();
+
+      expect(mockSp.web.lists.add).toHaveBeenCalled();
+      expect(result).toEqual([]);
+    });
+
+    it('deve propagar outros erros', async () => {
+      mockList.items.get.mockRejectedValue(new Error('Erro servidor'));
+
+      await expect(service.getPedidosFerias()).rejects.toThrow('Erro ao carregar pedidos de férias');
+    });
+  });
+
+  describe('createPedidoFerias', () => {
+    const novoPedido: Omit<IPedidoFerias, 'id'> = {
+      colaborador: 'Maria Santos',
+      email: 'maria@test.com',
+      dataInicio: new Date('2025-12-20'),
+      dataFim: new Date('2025-12-30'),
+      motivo: 'Férias de fim de ano',
+      status: 'Pendente',
+      dataSolicitacao: new Date('2025-11-01'),
+      diasFerias: 10,
+      motivoRejeicao: '',
+      aprovadoPor: ''
+    };
+
+    beforeEach(() => {
+      service.setup(mockContext);
+    });
+
+    it('deve criar pedido com sucesso', async () => {
+      const mockResult = {
+        item: {
+          select: jest.fn().mockReturnThis(),
+          get: jest.fn().mockResolvedValue({
+            Id: 2,
+            Title: 'Férias - Maria Santos',
+            Colaborador: 'Maria Santos',
+            Email: 'maria@test.com',
+            Status: 'Pendente'
+          })
+        }
+      };
+
+      mockList.items.add.mockResolvedValue(mockResult);
+
+      const result = await service.createPedidoFerias(novoPedido);
+
+      expect(mockList.items.add).toHaveBeenCalledWith({
+        Title: 'Férias - Maria Santos',
+        Colaborador: 'Maria Santos',
+        Email: 'maria@test.com',
+        DataInicio: novoPedido.dataInicio,
+        DataFim: novoPedido.dataFim,
+        Motivo: 'Férias de fim de ano',
+        Status: 'Pendente',
+        DataSolicitacao: novoPedido.dataSolicitacao,
+        DiasFerias: 10
+      });
+
+      expect(result.id).toBe(2);
+      expect(result.colaborador).toBe('Maria Santos');
+    });
+
+    it('deve tratar erros na criação', async () => {
+      mockList.items.add.mockRejectedValue(new Error('Erro de permissão'));
+
+      await expect(service.createPedidoFerias(novoPedido)).rejects.toThrow('Erro ao salvar pedido de férias');
+    });
+  });
+
+  describe('updatePedidoFerias', () => {
+    beforeEach(() => {
+      service.setup(mockContext);
+    });
+
+    it('deve atualizar pedido com sucesso', async () => {
+      const updates = { status: 'Aprovado', aprovadoPor: 'Gestor Teste' };
+      
+      await service.updatePedidoFerias(1, updates);
+
+      expect(mockList.items.getById).toHaveBeenCalledWith(1);
+      expect(mockList.items.update).toHaveBeenCalledWith({
+        Status: 'Aprovado',
+        AprovadoPor: 'Gestor Teste'
+      });
+    });
+
+    it('deve tratar erros na atualização', async () => {
+      mockList.items.update.mockRejectedValue(new Error('Erro de permissão'));
+
+      await expect(service.updatePedidoFerias(1, { status: 'Aprovado' })).rejects.toThrow('Erro ao atualizar pedido');
+    });
+  });
+
+  describe('deletePedidoFerias', () => {
+    beforeEach(() => {
+      service.setup(mockContext);
+    });
+
+    it('deve excluir pedido com sucesso', async () => {
+      await service.deletePedidoFerias(1);
+
+      expect(mockList.items.getById).toHaveBeenCalledWith(1);
+      expect(mockList.items.delete).toHaveBeenCalled();
+    });
+
+    it('deve tratar erros na exclusão', async () => {
+      mockList.items.delete.mockRejectedValue(new Error('Erro de permissão'));
+
+      await expect(service.deletePedidoFerias(1)).rejects.toThrow('Erro ao excluir pedido');
+    });
+  });
+
+  describe('aprovaPedido', () => {
+    beforeEach(() => {
+      service.setup(mockContext);
+    });
+
+    it('deve aprovar pedido corretamente', async () => {
+      const spy = jest.spyOn(service, 'updatePedidoFerias').mockResolvedValue();
+
+      await service.aprovaPedido(1, 'Gestor Aprovador');
+
+      expect(spy).toHaveBeenCalledWith(1, {
+        status: 'Aprovado',
+        aprovadoPor: 'Gestor Aprovador'
+      });
+    });
+  });
+
+  describe('rejeitaPedido', () => {
+    beforeEach(() => {
+      service.setup(mockContext);
+    });
+
+    it('deve rejeitar pedido corretamente', async () => {
+      const spy = jest.spyOn(service, 'updatePedidoFerias').mockResolvedValue();
+
+      await service.rejeitaPedido(1, 'Gestor Rejeitador', 'Período não disponível');
+
+      expect(spy).toHaveBeenCalledWith(1, {
+        status: 'Rejeitado',
+        aprovadoPor: 'Gestor Rejeitador',
+        motivoRejeicao: 'Período não disponível'
+      });
+    });
+  });
+});

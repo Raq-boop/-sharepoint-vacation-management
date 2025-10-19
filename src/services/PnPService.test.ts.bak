@@ -1,0 +1,252 @@
+import { sp } from '@pnp/sp/presets/all';
+import { IWeb } from '@pnp/sp/webs';
+import { IPedidoFerias } from '../models/IPedidoFerias';
+import { WebPartContext } from '@microsoft/sp-webpart-base';
+
+export interface IPnPService {
+  setup(context: WebPartContext): void;
+  getPedidosFerias(): Promise<IPedidoFerias[]>;
+  createPedidoFerias(pedido: Omit<IPedidoFerias, 'id'>): Promise<IPedidoFerias>;
+  updatePedidoFerias(id: number, pedido: Partial<IPedidoFerias>): Promise<void>;
+  deletePedidoFerias(id: number): Promise<void>;
+  aprovaPedido(id: number, aprovadoPor: string): Promise<void>;
+  rejeitaPedido(id: number, rejeitadoPor: string, motivo: string): Promise<void>;
+}
+
+export class PnPService implements IPnPService {
+  private _web: IWeb;
+  private _listName: string = 'Pedidos de Férias';
+
+  /**
+   * Configura o contexto do PnP
+   * @param context - Contexto da web part
+   */
+  public setup(context: WebPartContext): void {
+    try {
+      sp.setup({
+        spfxContext: context as any,
+        sp: {
+          baseUrl: context.pageContext.web.absoluteUrl
+        }
+      });
+      
+      this._web = sp.web;
+      console.info('PnP Service configurado com sucesso');
+    } catch (error) {
+      console.error('Erro ao configurar PnP Service:', error);
+      throw new Error('Falha na inicialização do serviço SharePoint');
+    }
+  }
+
+  /**
+   * Busca todos os pedidos de férias da lista SharePoint
+   * @returns Promise com array de pedidos
+   */
+  public async getPedidosFerias(): Promise<IPedidoFerias[]> {
+    try {
+      const items = await this._web.lists
+        .getByTitle(this._listName)
+        .items
+        .select(
+          'Id',
+          'Title',
+          'Colaborador',
+          'Email', 
+          'DataInicio',
+          'DataFim',
+          'Motivo',
+          'Status',
+          'MotivoRejeicao',
+          'AprovadoPor',
+          'DataSolicitacao',
+          'DiasFerias',
+          'Created',
+          'Modified'
+        )
+        .orderBy('Created', false)
+        .get();
+
+      return items.map(this.mapSharePointItem);
+    } catch (error) {
+      console.error('Erro ao buscar pedidos de férias:', error);
+      
+      // Se a lista não existir, tenta criar
+      if (error.status === 404) {
+        await this.createListIfNotExists();
+        return []; // Retorna array vazio após criar a lista
+      }
+      
+      throw new Error('Erro ao carregar pedidos de férias');
+    }
+  }
+
+  /**
+   * Cria um novo pedido de férias
+   * @param pedido - Dados do pedido sem ID
+   * @returns Promise com o pedido criado
+   */
+  public async createPedidoFerias(pedido: Omit<IPedidoFerias, 'id'>): Promise<IPedidoFerias> {
+    try {
+      const result = await this._web.lists
+        .getByTitle(this._listName)
+        .items
+        .add({
+          Title: `Férias - ${pedido.colaborador}`,
+          Colaborador: pedido.colaborador,
+          Email: pedido.email,
+          DataInicio: pedido.dataInicio,
+          DataFim: pedido.dataFim,
+          Motivo: pedido.motivo,
+          Status: pedido.status,
+          DataSolicitacao: pedido.dataSolicitacao,
+          DiasFerias: pedido.diasFerias
+        });
+
+      const newItem = await result.item.select(
+        'Id', 'Title', 'Colaborador', 'Email', 'DataInicio', 'DataFim', 
+        'Motivo', 'Status', 'DataSolicitacao', 'DiasFerias'
+      ).get();
+
+      console.info('Pedido de férias criado com sucesso:', newItem.Id);
+      return this.mapSharePointItem(newItem);
+    } catch (error) {
+      console.error('Erro ao criar pedido de férias:', error);
+      throw new Error('Erro ao salvar pedido de férias');
+    }
+  }
+
+  /**
+   * Atualiza um pedido de férias existente
+   * @param id - ID do item
+   * @param pedido - Dados parciais para atualização
+   */
+  public async updatePedidoFerias(id: number, pedido: Partial<IPedidoFerias>): Promise<void> {
+    try {
+      await this._web.lists
+        .getByTitle(this._listName)
+        .items
+        .getById(id)
+        .update({
+          ...(pedido.colaborador && { Colaborador: pedido.colaborador }),
+          ...(pedido.email && { Email: pedido.email }),
+          ...(pedido.dataInicio && { DataInicio: pedido.dataInicio }),
+          ...(pedido.dataFim && { DataFim: pedido.dataFim }),
+          ...(pedido.motivo && { Motivo: pedido.motivo }),
+          ...(pedido.status && { Status: pedido.status }),
+          ...(pedido.motivoRejeicao && { MotivoRejeicao: pedido.motivoRejeicao }),
+          ...(pedido.aprovadoPor && { AprovadoPor: pedido.aprovadoPor }),
+          ...(pedido.diasFerias && { DiasFerias: pedido.diasFerias })
+        });
+
+      console.info('Pedido de férias atualizado com sucesso:', id);
+    } catch (error) {
+      console.error('Erro ao atualizar pedido de férias:', error);
+      throw new Error('Erro ao atualizar pedido');
+    }
+  }
+
+  /**
+   * Exclui um pedido de férias
+   * @param id - ID do item a ser excluído
+   */
+  public async deletePedidoFerias(id: number): Promise<void> {
+    try {
+      await this._web.lists
+        .getByTitle(this._listName)
+        .items
+        .getById(id)
+        .delete();
+
+      console.info('Pedido de férias excluído com sucesso:', id);
+    } catch (error) {
+      console.error('Erro ao excluir pedido de férias:', error);
+      throw new Error('Erro ao excluir pedido');
+    }
+  }
+
+  /**
+   * Aprova um pedido de férias
+   * @param id - ID do pedido
+   * @param aprovadoPor - Nome de quem aprovou
+   */
+  public async aprovaPedido(id: number, aprovadoPor: string): Promise<void> {
+    await this.updatePedidoFerias(id, {
+      status: 'Aprovado',
+      aprovadoPor: aprovadoPor
+    });
+  }
+
+  /**
+   * Rejeita um pedido de férias
+   * @param id - ID do pedido
+   * @param rejeitadoPor - Nome de quem rejeitou
+   * @param motivo - Motivo da rejeição
+   */
+  public async rejeitaPedido(id: number, rejeitadoPor: string, motivo: string): Promise<void> {
+    await this.updatePedidoFerias(id, {
+      status: 'Rejeitado',
+      aprovadoPor: rejeitadoPor,
+      motivoRejeicao: motivo
+    });
+  }
+
+  /**
+   * Mapeia item do SharePoint para interface do projeto
+   */
+  private mapSharePointItem(item: any): IPedidoFerias {
+    return {
+      id: item.Id,
+      colaborador: item.Colaborador || '',
+      email: item.Email || '',
+      dataInicio: item.DataInicio ? new Date(item.DataInicio) : new Date(),
+      dataFim: item.DataFim ? new Date(item.DataFim) : new Date(),
+      motivo: item.Motivo || '',
+      status: item.Status || 'Pendente',
+      motivoRejeicao: item.MotivoRejeicao || '',
+      aprovadoPor: item.AprovadoPor || '',
+      dataSolicitacao: item.DataSolicitacao ? new Date(item.DataSolicitacao) : new Date(item.Created),
+      diasFerias: item.DiasFerias || 0
+    };
+  }
+
+  /**
+   * Cria a lista no SharePoint se ela não existir
+   */
+  private async createListIfNotExists(): Promise<void> {
+    try {
+      console.info('Tentando criar lista "Pedidos de Férias"...');
+      
+      const listCreationResult = await this._web.lists.add(
+        this._listName,
+        'Lista para gerenciar pedidos de férias dos colaboradores',
+        100, // Template para lista personalizada
+        false
+      );
+
+      const list = listCreationResult.list;
+
+      // Adicionar campos customizados
+      await Promise.all([
+        list.fields.addText('Colaborador', { Required: true }),
+        list.fields.addText('Email', { Required: true }),
+        list.fields.addDateTime('DataInicio', { Required: true, DisplayFormat: 1 }),
+        list.fields.addDateTime('DataFim', { Required: true, DisplayFormat: 1 }),
+        list.fields.addMultilineText('Motivo', { Required: false }),
+        list.fields.addChoice('Status', {
+          Required: true,
+          Choices: ['Pendente', 'Aprovado', 'Rejeitado'],
+          DefaultValue: 'Pendente'
+        }),
+        list.fields.addMultilineText('MotivoRejeicao', { Required: false }),
+        list.fields.addText('AprovadoPor', { Required: false }),
+        list.fields.addDateTime('DataSolicitacao', { Required: true }),
+        list.fields.addNumber('DiasFerias', { Required: false })
+      ]);
+
+      console.info('Lista "Pedidos de Férias" criada com sucesso');
+    } catch (error) {
+      console.error('Erro ao criar lista:', error);
+      throw new Error('Não foi possível criar a lista de pedidos de férias');
+    }
+  }
+}

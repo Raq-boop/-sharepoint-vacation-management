@@ -151,6 +151,88 @@ export class PnPService {
       "Erro ao obter usuário atual"
     );
   }
+
+  /**
+   * Busca todos os pedidos de férias
+   */
+  public async getPedidosFerias(): Promise<unknown[]> {
+    const result = await this.executeWithErrorHandling(
+      async () => {
+        const items = await this._sp.web.lists
+          .getByTitle("PedidoFerias")
+          .items
+          .select(
+            'Id',
+            'Title',
+            'ColaboradorId',
+            'Colaborador/Title',
+            'Colaborador/EMail',
+            'Colaborador/ID', 
+            'DataInicio',
+            'DataFim',
+            'DiasTotal',
+            'Motivo',
+            'Estado',
+            'DataSolicitacao',
+            'AprovadoPor/Title',
+            'AprovadoPor/ID',
+            'DataAprovacao',
+            'Observacoes',
+            'Created',
+            'Modified',
+            'Author/Title',
+            'Author/ID',
+            'Editor/Title',
+            'Editor/ID'
+          )
+          .expand('Colaborador', 'AprovadoPor', 'Author', 'Editor')
+          .orderBy('Created', false)();
+        
+        return items || [];
+      },
+      "Erro ao buscar pedidos de férias"
+    );
+    return result || [];
+  }
+
+  /**
+   * Aprova um pedido de férias
+   */
+  public async aprovaPedido(id: number, aprovadoPor: string): Promise<void> {
+    await this.executeWithErrorHandling(
+      async () => {
+        await this._sp.web.lists
+          .getByTitle("PedidoFerias")
+          .items
+          .getById(id)
+          .update({
+            Estado: 'Aprovado',
+            DataAprovacao: new Date().toISOString()
+          });
+      },
+      `Erro ao aprovar pedido ${id}`
+    );
+  }
+
+  /**
+   * Rejeita um pedido de férias
+   */
+  public async rejeitaPedido(id: number, rejeitadoPor: string, motivo: string): Promise<void> {
+    await this.executeWithErrorHandling(
+      async () => {
+        await this._sp.web.lists
+          .getByTitle("PedidoFerias")
+          .items
+          .getById(id)
+          .update({
+            Estado: 'Rejeitado',
+            DataAprovacao: new Date().toISOString(),
+            Observacoes: motivo
+          });
+      },
+      `Erro ao rejeitar pedido ${id}`
+    );
+  }
 }
 
 export default PnPService;
