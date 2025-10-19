@@ -32,3 +32,19 @@ obj
 
 # Styles Generated Code
 *.scss.ts
+
+# Security Files
+*.key
+*.pem
+*.p12
+*.pfx
+.env
+.env.local
+.env.*.local
+secrets/
+security-audit.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.nyc_output/
+coverage-audit.json

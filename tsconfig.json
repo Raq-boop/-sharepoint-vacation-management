@@ -12,6 +12,8 @@
     "outDir": "lib",
     "inlineSources": false,
     "noImplicitAny": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
 
     "typeRoots": [
       "./node_modules/@types",

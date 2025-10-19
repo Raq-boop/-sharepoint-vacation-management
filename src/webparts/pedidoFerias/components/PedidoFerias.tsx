@@ -3,6 +3,8 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import styles from './PedidoFerias.module.scss';
 import type { IPedidoFeriasProps } from './IPedidoFeriasProps';
 import { PnPService } from '../../../services/PnPService';
+import { TelemetryService, useTelemetry } from '../../../services/TelemetryService';
+import { useAccessibility } from '../../../services/AccessibilityService';
 import { IPedidoFerias, EstadoPedido } from '../../../models/IPedidoFerias';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
@@ -31,6 +33,12 @@ interface IDialogState {
 }
 
 const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
+  // 🔧 Inicialização dos serviços avançados
+  const telemetryService = useMemo(() => new TelemetryService(props.context), [props.context]);
+  const { useFocusManagement } = useAccessibility(props.context);
+  useTelemetry(telemetryService);
+  useFocusManagement();
+  
   // Estados do componente
   const [pedidos, setPedidos] = useState<IPedidoFerias[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -233,38 +241,122 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
       setLoading(true);
       setError({ show: false, message: '', type: MessageBarType.error });
       
-      const data = await pnpService.getPedidosFerias() as IPedidoFerias[];
-      setPedidos(data.length > 0 ? data : getMockData());
+      console.log('🔄 Carregando pedidos de férias do SharePoint...');
+      
+      // Tentar carregar dados reais do SharePoint
+      const data = await pnpService.getPedidosFerias();
+      
+      if (data && data.length > 0) {
+        console.log(`✅ ${data.length} pedidos carregados do SharePoint:`, data);
+        setPedidos(data);
+        setError({
+          show: true,
+          message: `✅ ${data.length} pedidos carregados do SharePoint com sucesso!`,
+          type: MessageBarType.success
+        });
+        
+        // Auto-dismiss success message
+        setTimeout(() => {
+          setError({ show: false, message: '', type: MessageBarType.error });
+        }, 3000);
+      } else {
+        console.log('📝 Lista SharePoint vazia, usando dados de exemplo...');
+        setPedidos(getMockData());
+        setError({
+          show: true,
+          message: '📝 Lista SharePoint vazia. Exibindo dados de exemplo para demonstração.',
+          type: MessageBarType.info
+        });
+      }
       
     } catch (err) {
-      console.error('Erro ao carregar pedidos:', err);
+      console.error('❌ Erro ao carregar pedidos do SharePoint:', err);
+      
+      // Usar dados mock como fallback
+      setPedidos(getMockData());
+      
+      // Mostrar erro específico baseado no tipo
+      let errorMessage = '⚠️ Não foi possível conectar ao SharePoint. ';
+      
+      if (err instanceof Error) {
+        if (err.message.indexOf('401') !== -1 || err.message.indexOf('unauthorized') !== -1) {
+          errorMessage += 'Verifique suas permissões de acesso.';
+        } else if (err.message.indexOf('404') !== -1 || err.message.indexOf('not found') !== -1) {
+          errorMessage += 'Lista não encontrada. Será criada automaticamente.';
+        } else if (err.message.indexOf('network') !== -1 || err.message.indexOf('fetch') !== -1) {
+          errorMessage += 'Problemas de conectividade. Verifique sua conexão.';
+        } else {
+          errorMessage += 'Usando dados de exemplo para demonstração.';
+        }
+      } else {
+        errorMessage += 'Usando dados de exemplo para demonstração.';
+      }
+      
       setError({
         show: true,
-        message: 'Erro ao carregar pedidos. Usando dados de exemplo.',
+        message: errorMessage,
         type: MessageBarType.warning
       });
-      setPedidos(getMockData());
     } finally {
       setLoading(false);
     }
-  }, [pnpService]);
+  }, [pnpService, getMockData]);
 
   // Função para aprovar pedido
   const handleApprove = useCallback(async (id: number) => {
     try {
       setProcessing(true);
       
-      // Simular delay de rede para demonstração
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const pedido = pedidos.filter((p: IPedidoFerias) => p.Id === id)[0];
+      const pedidoNome = pedido ? pedido.Colaborador.Title : 'colaborador';
       
-      // Tentar integração real, mas usar fallback local se falhar
-      try {
-        await pnpService.aprovaPedido(id, props.userDisplayName);
-      } catch (serviceError) {
-        console.warn('Serviço SharePoint não disponível, usando dados locais:', serviceError);
+      console.log(`🔄 Aprovando pedido de ${pedidoNome}...`);
+      
+      // Tentar aprovação real no SharePoint
+      const success = await pnpService.aprovaPedido(id, props.userDisplayName || 'Gestor');
+      
+      if (success) {
+        console.log(`✅ Pedido ${id} aprovado no SharePoint`);
+        
+        // Atualizar estado local
+        setPedidos(prev => prev.map(p => 
+          p.Id === id 
+            ? { 
+                ...p, 
+                Estado: EstadoPedido.Aprovado, 
+                AprovadoPor: { Title: props.userDisplayName || 'Gestor', Id: 0 },
+                DataAprovacao: new Date().toISOString()
+              }
+            : p
+        ));
+        
+        setError({
+          show: true,
+          message: `✅ Pedido de ${pedidoNome} aprovado com sucesso no SharePoint!`,
+          type: MessageBarType.success
+        });
+        
+        // Recarregar dados do SharePoint para sincronizar
+        setTimeout(() => {
+          loadPedidos().catch(console.error);
+        }, 1000);
+        
+      } else {
+        throw new Error('Aprovação falhou no SharePoint');
       }
       
-      // Atualizar estado local (funciona tanto com backend real quanto simulado)
+      // Auto-dismiss success message after 4 seconds
+      setTimeout(() => {
+        setError({ show: false, message: '', type: MessageBarType.error });
+      }, 4000);
+      
+    } catch (error) {
+      console.error('❌ Erro ao aprovar pedido:', error);
+      
+      // Fallback: aprovar localmente se SharePoint falhar
+      const pedido = pedidos.filter((p: IPedidoFerias) => p.Id === id)[0];
+      const pedidoNome = pedido ? pedido.Colaborador.Title : 'colaborador';
+      
       setPedidos(prev => prev.map(p => 
         p.Id === id 
           ? { 
@@ -276,30 +368,15 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
           : p
       ));
       
-      const pedido = pedidos.filter((p: IPedidoFerias) => p.Id === id)[0];
-      const pedidoNome = pedido ? pedido.Colaborador.Title : 'colaborador';
       setError({
         show: true,
-        message: `✓ Pedido de ${pedidoNome} aprovado com sucesso!`,
-        type: MessageBarType.success
-      });
-      
-      // Auto-dismiss success message after 4 seconds
-      setTimeout(() => {
-        setError({ show: false, message: '', type: MessageBarType.error });
-      }, 4000);
-      
-    } catch (error) {
-      console.error('Erro ao aprovar:', error);
-      setError({
-        show: true,
-        message: '❌ Erro ao aprovar pedido. Tente novamente.',
-        type: MessageBarType.error
+        message: `⚠️ Pedido de ${pedidoNome} aprovado localmente. SharePoint pode não estar sincronizado.`,
+        type: MessageBarType.warning
       });
     } finally {
       setProcessing(false);
     }
-  }, [pnpService, props.userDisplayName, pedidos]);
+  }, [pnpService, props.userDisplayName, pedidos, loadPedidos]);
 
   // Função para rejeitar pedido
   const handleReject = useCallback(async (id: number, motivo: string) => {
@@ -315,17 +392,57 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
     try {
       setProcessing(true);
       
-      // Simular delay de rede para demonstração
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const pedido = pedidos.filter((p: IPedidoFerias) => p.Id === id)[0];
+      const pedidoNome = pedido ? pedido.Colaborador.Title : 'colaborador';
       
-      // Tentar integração real, mas usar fallback local se falhar
-      try {
-        await pnpService.rejeitaPedido(id, props.userDisplayName, motivo);
-      } catch (serviceError) {
-        console.warn('Serviço SharePoint não disponível, usando dados locais:', serviceError);
+      console.log(`🔄 Rejeitando pedido de ${pedidoNome}...`);
+      
+      // Tentar rejeição real no SharePoint
+      const success = await pnpService.rejeitaPedido(id, props.userDisplayName || 'Gestor', motivo);
+      
+      if (success) {
+        console.log(`✅ Pedido ${id} rejeitado no SharePoint`);
+        
+        // Atualizar estado local
+        setPedidos(prev => prev.map(p => 
+          p.Id === id 
+            ? { 
+                ...p, 
+                Estado: EstadoPedido.Rejeitado, 
+                AprovadoPor: { Title: props.userDisplayName || 'Gestor', Id: 0 }, 
+                Observacoes: motivo,
+                DataAprovacao: new Date().toISOString()
+              }
+            : p
+        ));
+        
+        setError({
+          show: true,
+          message: `✅ Pedido de ${pedidoNome} rejeitado com sucesso no SharePoint!`,
+          type: MessageBarType.success
+        });
+        
+        // Recarregar dados do SharePoint para sincronizar
+        setTimeout(() => {
+          loadPedidos().catch(console.error);
+        }, 1000);
+        
+      } else {
+        throw new Error('Rejeição falhou no SharePoint');
       }
       
-      // Atualizar estado local
+      // Auto-dismiss success message after 4 seconds
+      setTimeout(() => {
+        setError({ show: false, message: '', type: MessageBarType.error });
+      }, 4000);
+      
+    } catch (error) {
+      console.error('❌ Erro ao rejeitar pedido:', error);
+      
+      // Fallback: rejeitar localmente se SharePoint falhar
+      const pedido = pedidos.filter((p: IPedidoFerias) => p.Id === id)[0];
+      const pedidoNome = pedido ? pedido.Colaborador.Title : 'colaborador';
+      
       setPedidos(prev => prev.map(p => 
         p.Id === id 
           ? { 
@@ -338,30 +455,15 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
           : p
       ));
       
-      const pedido = pedidos.filter((p: IPedidoFerias) => p.Id === id)[0];
-      const pedidoNome = pedido ? pedido.Colaborador.Title : 'colaborador';
       setError({
         show: true,
-        message: `❌ Pedido de ${pedidoNome} rejeitado com sucesso!`,
-        type: MessageBarType.success
-      });
-      
-      // Auto-dismiss success message after 4 seconds
-      setTimeout(() => {
-        setError({ show: false, message: '', type: MessageBarType.error });
-      }, 4000);
-      
-    } catch (error) {
-      console.error('Erro ao rejeitar:', error);
-      setError({
-        show: true,
-        message: '❌ Erro ao rejeitar pedido. Tente novamente.',
-        type: MessageBarType.error
+        message: `⚠️ Pedido de ${pedidoNome} rejeitado localmente. SharePoint pode não estar sincronizado.`,
+        type: MessageBarType.warning
       });
     } finally {
       setProcessing(false);
     }
-  }, [pnpService, props.userDisplayName, pedidos]);
+  }, [pnpService, props.userDisplayName, pedidos, loadPedidos]);
 
   // Filtrar e ordenar pedidos
   const filteredAndSortedPedidos = useMemo(() => {

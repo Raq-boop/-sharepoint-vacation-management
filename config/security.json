@@ -1,0 +1,56 @@
+{
+  "security": {
+    "csp": {
+      "default-src": [
+        "'self'"
+      ],
+      "script-src": [
+        "'self'",
+        "'unsafe-inline'",
+        "*.sharepoint.com",
+        "*.microsoft.com"
+      ],
+      "style-src": [
+        "'self'",
+        "'unsafe-inline'",
+        "*.sharepoint.com"
+      ],
+      "img-src": [
+        "'self'",
+        "data:",
+        "*.sharepoint.com",
+        "*.microsoft.com"
+      ],
+      "connect-src": [
+        "'self'",
+        "*.sharepoint.com",
+        "*.microsoft.com",
+        "*.microsoftonline.com"
+      ],
+      "font-src": [
+        "'self'",
+        "*.sharepoint.com"
+      ],
+      "frame-ancestors": [
+        "'self'",
+        "*.sharepoint.com"
+      ]
+    },
+    "headers": {
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "1; mode=block",
+      "Referrer-Policy": "strict-origin-when-cross-origin"
+    },
+    "audit": {
+      "level": "moderate",
+      "excludePackages": [],
+      "allowedLicenses": [
+        "MIT",
+        "Apache-2.0",
+        "BSD-3-Clause",
+        "ISC"
+      ]
+    }
+  }
+}

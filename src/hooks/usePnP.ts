@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import PnPService from '../services/PnPService';
+import { PnPService } from '../services/PnPService';
 
 // Interface para o estado de loading
 interface LoadingState {
