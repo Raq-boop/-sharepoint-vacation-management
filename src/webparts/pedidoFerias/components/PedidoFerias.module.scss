@@ -2,12 +2,269 @@
 
 .pedidoFerias {
   .container {
-    max-width: 1200px;
+    max-width: 1000px;
     margin: 0 auto;
-    background-color: $ms-color-themePrimary;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa;
     padding: 20px;
+    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  // Seção de Filtros
+  .filterSection {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    
+    h3 {
+      margin: 0 0 16px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .filterIcon {
+      display: inline-block;
+      font-size: 18px;
+    }
+  }
+
+  .filterControls {
+    display: flex;
+    gap: 12px;
+    
+    .searchInput {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      
+      &::placeholder {
+        color: #9ca3af;
+      }
+      
+      &:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+    }
+    
+    .statusFilter {
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      background: white;
+      min-width: 150px;
+      
+      &:focus {
+        outline: none;
+        border-color: #3b82f6;
+      }
+    }
+  }
+
+  // Lista de Pedidos
+  .requestsList {
+    .listHeader {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      
+      .listIcon {
+        font-size: 18px;
+      }
+      
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+      }
+    }
+  }
+
+  .requestItem {
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+    
+    &.pending {
+      border-left: 4px solid #f59e0b;
+    }
+    
+    &.approved {
+      border-left: 4px solid #10b981;
+    }
+    
+    &.rejected {
+      border-left: 4px solid #ef4444;
+    }
+  }
+
+  .requestHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 16px 20px 12px;
+    
+    .userInfo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      
+      .userDetails {
+        h4 {
+          margin: 0;
+          font-size: 16px;
+          font-weight: 600;
+          color: #333;
+        }
+        
+        p {
+          margin: 4px 0 0 0;
+          font-size: 14px;
+          color: #6b7280;
+        }
+      }
+    }
+    
+    .requestMeta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      
+      .requestDate {
+        font-size: 12px;
+        color: #6b7280;
+      }
+    }
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: white;
+    font-weight: bold;
+    font-size: 14px;
+    
+    &.avatarJS {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    }
+    
+    &.avatarMS {
+      background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+    }
+  }
+
+  .statusBadge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    
+    &.statusPending {
+      background: #f59e0b;
+      color: white;
+    }
+    
+    &.statusApproved {
+      background: #10b981;
+      color: white;
+    }
+    
+    &.statusRejected {
+      background: #ef4444;
+      color: white;
+    }
+  }
+
+  .requestBody {
+    padding: 0 20px 20px;
+    
+    .vacationPeriod,
+    .vacationReason {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      
+      .periodIcon,
+      .reasonIcon {
+        font-size: 16px;
+      }
+    }
+    
+    .vacationReason span:last-child {
+      font-style: italic;
+      color: #6b7280;
+    }
+  }
+
+  .actionButtons {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+    
+    .approveBtn {
+      background: #10b981;
+      color: white;
+      
+      &:hover:not(:disabled) {
+        background: #059669;
+      }
+    }
+    
+    .rejectBtn {
+      background: #ef4444;
+      color: white;
+      
+      &:hover:not(:disabled) {
+        background: #dc2626;
+      }
+    }
+    
+    .detailsBtn {
+      background: #f3f4f6;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      
+      &:hover {
+        background: #e5e7eb;
+      }
+    }
   }
 
   .row {
