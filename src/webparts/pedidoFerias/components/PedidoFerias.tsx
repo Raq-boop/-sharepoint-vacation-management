@@ -88,6 +88,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
   const [pedidos, setPedidos] = useState<IPedidoFerias[]>([]);          // Lista de pedidos carregados
   const [loading, setLoading] = useState<boolean>(true);                // Estado de carregamento inicial
   const [processing, setProcessing] = useState<boolean>(false);         // Estado de processamento de ações
+  const [isUsingMockData, setIsUsingMockData] = useState<boolean>(false); // Indica se está usando dados de exemplo
   const [error, setError] = useState<IErrorState>({                     // Gerenciamento centralizado de erros
     show: false, 
     message: '', 
@@ -298,27 +299,43 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
       // Tentar carregar dados reais do SharePoint
       const data = await pnpService.getPedidosFerias();
       
+      // Verificar se está usando dados de exemplo
+      const usingMockData = pnpService.isUsingMockData();
+      const connectionError = pnpService.getConnectionError();
+      
+      setIsUsingMockData(usingMockData);
+      
       if (data && data.length > 0) {
-        console.log(`✅ ${data.length} pedidos carregados do SharePoint:`, data);
+        console.log(`✅ ${data.length} pedidos carregados:`, data);
         setPedidos(data);
-        setError({
-          show: true,
-          message: `✅ ${data.length} pedidos carregados do SharePoint com sucesso!`,
-          type: MessageBarType.success
-        });
         
-        // Auto-dismiss success message
-        setTimeout(() => {
-          setError({ show: false, message: '', type: MessageBarType.error });
-        }, 3000);
+        if (usingMockData) {
+          setError({
+            show: true,
+            message: '⚠️ Não foi possível conectar ao SharePoint. Usando dados de exemplo para demonstração.',
+            type: MessageBarType.warning
+          });
+        } else {
+          setError({
+            show: true,
+            message: `✅ ${data.length} pedidos carregados do SharePoint com sucesso!`,
+            type: MessageBarType.success
+          });
+          
+          // Auto-dismiss success message
+          setTimeout(() => {
+            setError({ show: false, message: '', type: MessageBarType.error });
+          }, 3000);
+        }
       } else {
-        console.log('📝 Lista SharePoint vazia, usando dados de exemplo...');
+        console.log('📝 Nenhum pedido encontrado, usando dados de exemplo...');
         setPedidos(getMockData());
         setError({
           show: true,
-          message: '📝 Lista SharePoint vazia. Exibindo dados de exemplo para demonstração.',
+          message: connectionError || '📝 Lista SharePoint vazia. Exibindo dados de exemplo para demonstração.',
           type: MessageBarType.info
         });
+        setIsUsingMockData(true);
       }
       
     } catch (err) {
@@ -716,6 +733,25 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
   return (
     <div className={styles.pedidoFerias}>
       <div className={styles.container}>
+        {/* Banner de modo demonstração */}
+        {isUsingMockData && (
+          <MessageBar
+            messageBarType={MessageBarType.warning}
+            isMultiline={true}
+            className={styles.demoBanner}
+          >
+            <div className={styles.demoContent}>
+              <strong>🎭 MODO DEMONSTRAÇÃO</strong>
+              <p>⚠️ Não foi possível conectar ao SharePoint. Os dados mostrados são apenas para demonstração e não refletem informações reais.</p>
+              <ul>
+                <li>✅ Todas as funcionalidades estão operacionais</li>
+                <li>📊 Dados são salvos localmente no navegador</li>
+                <li>🔄 Alterações serão perdidas ao recarregar a página</li>
+              </ul>
+            </div>
+          </MessageBar>
+        )}
+
         {/* Mensagens de erro/sucesso */}
         {error.show && (
           <MessageBar

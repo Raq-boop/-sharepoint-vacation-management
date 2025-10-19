@@ -26,6 +26,7 @@ import "@pnp/sp/items";
 import "@pnp/sp/site-users";
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IPedidoFerias, EstadoPedido } from '../models/IPedidoFerias';
+import { MockDataService } from './MockDataService';
 
 // 🏷️ Tipo para itens do SharePoint (usando Record para type safety)
 type SharePointItem = Record<string, unknown>;
@@ -42,6 +43,8 @@ export class PnPService {
   private _sp: SPFI;
   private _listName: string = 'PedidosFerias';
   private _initialized: boolean = false;
+  private _useMockData: boolean = false;
+  private _connectionError: string | undefined = undefined;
 
   constructor(context: WebPartContext) {
     // Configuração do PnP JS com SPFx context de forma segura
@@ -70,8 +73,56 @@ export class PnPService {
       return await operation();
     } catch (error) {
       console.error(`${LOG_SOURCE} - ${errorMessage}:`, error);
+      
+      // Detectar erros de conexão e ativar modo de demonstração
+      if (this.isConnectionError(error)) {
+        console.warn('⚠️ Não foi possível conectar ao SharePoint. Usando dados de exemplo para demonstração.');
+        this._useMockData = true;
+        this._connectionError = 'Não foi possível conectar ao SharePoint. Usando dados de exemplo para demonstração.';
+      }
+      
       return undefined;
     }
+  }
+
+  /**
+   * Verifica se o erro é relacionado à conexão
+   */
+  private isConnectionError(error: unknown): boolean {
+    let errorMessage = '';
+    let errorString = '';
+    
+    try {
+      if (error && typeof error === 'object' && 'message' in error) {
+        const errorObj = error as { message: string };
+        errorMessage = errorObj.message.toLowerCase();
+      }
+      errorString = String(error).toLowerCase();
+    } catch {
+      return false;
+    }
+    
+    return errorMessage.indexOf('network') !== -1 ||
+           errorMessage.indexOf('connection') !== -1 ||
+           errorMessage.indexOf('timeout') !== -1 ||
+           errorMessage.indexOf('fetch') !== -1 ||
+           errorMessage.indexOf('cors') !== -1 ||
+           errorString.indexOf('failed to fetch') !== -1 ||
+           errorString.indexOf('networkerror') !== -1;
+  }
+
+  /**
+   * Verifica se está usando dados de exemplo
+   */
+  public isUsingMockData(): boolean {
+    return this._useMockData;
+  }
+
+  /**
+   * Obtém mensagem de erro de conexão
+   */
+  public getConnectionError(): string | undefined {
+    return this._connectionError;
   }
 
   /**
@@ -199,6 +250,11 @@ export class PnPService {
    * Obtém todos os pedidos de férias da lista SharePoint
    */
   public async getPedidosFerias(): Promise<IPedidoFerias[]> {
+    // Se já está usando dados de exemplo, retorna diretamente
+    if (this._useMockData) {
+      return await MockDataService.getPedidosFerias();
+    }
+
     await this.initializeList(); // Garantir que a lista existe
 
     const result = await this.executeWithErrorHandling(
@@ -237,6 +293,11 @@ export class PnPService {
       'Erro ao obter pedidos de férias'
     );
 
+    // Se falhou a conexão, usar dados de exemplo
+    if (result === undefined && this._useMockData) {
+      return await MockDataService.getPedidosFerias();
+    }
+
     return result || [];
   }
 
@@ -244,6 +305,11 @@ export class PnPService {
    * Cria um novo pedido de férias
    */
   public async createPedidoFerias(pedido: Omit<IPedidoFerias, 'Id' | 'Created' | 'Modified' | 'Author' | 'Editor'>): Promise<number | undefined> {
+    // Se já está usando dados de exemplo, criar no mock
+    if (this._useMockData) {
+      return await MockDataService.createPedidoFerias(pedido);
+    }
+
     await this.initializeList();
 
     const result = await this.executeWithErrorHandling(
@@ -265,6 +331,11 @@ export class PnPService {
       },
       'Erro ao criar pedido de férias'
     );
+
+    // Se falhou a conexão, criar no mock
+    if (result === undefined && this._useMockData) {
+      return await MockDataService.createPedidoFerias(pedido);
+    }
 
     return result;
   }
@@ -449,19 +520,39 @@ export class PnPService {
    * Método para atualizar um item em uma lista de forma segura
    */
   public async updateListItem(listTitle: string, itemId: number, itemData: Record<string, unknown>): Promise<unknown> {
-    return this.executeWithErrorHandling(
+    // Se já está usando dados de exemplo, atualizar no mock
+    if (this._useMockData) {
+      await MockDataService.updateListItem(itemId, itemData as Partial<IPedidoFerias>);
+      return { success: true };
+    }
+
+    const result = await this.executeWithErrorHandling(
       async () => {
-        const result = await this._sp.web.lists.getByTitle(listTitle).items.getById(itemId).update(itemData);
-        return result;
+        const updateResult = await this._sp.web.lists.getByTitle(listTitle).items.getById(itemId).update(itemData);
+        return updateResult;
       },
       `Erro ao atualizar item ${itemId} na lista ${listTitle}`
     );
+
+    // Se falhou a conexão, atualizar no mock
+    if (result === undefined && this._useMockData) {
+      await MockDataService.updateListItem(itemId, itemData as Partial<IPedidoFerias>);
+      return { success: true };
+    }
+
+    return result;
   }
 
   /**
    * Método para deletar um item de uma lista de forma segura
    */
   public async deleteListItem(listTitle: string, itemId: number): Promise<boolean> {
+    // Se já está usando dados de exemplo, deletar do mock
+    if (this._useMockData) {
+      await MockDataService.deletePedidoFerias(itemId);
+      return true;
+    }
+
     const result = await this.executeWithErrorHandling(
       async () => {
         await this._sp.web.lists.getByTitle(listTitle).items.getById(itemId).delete();
@@ -469,6 +560,13 @@ export class PnPService {
       },
       `Erro ao deletar item ${itemId} da lista ${listTitle}`
     );
+
+    // Se falhou a conexão, deletar do mock
+    if (result === undefined && this._useMockData) {
+      await MockDataService.deletePedidoFerias(itemId);
+      return true;
+    }
+
     return result || false;
   }
 
