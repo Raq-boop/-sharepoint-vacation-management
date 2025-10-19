@@ -1,3 +1,25 @@
+/**
+ * 🏖️ PedidoFeriasWebPart - WebPart Enterprise Principal
+ * 
+ * Classe principal da Web Part do sistema de pedidos de férias.
+ * Responsável por:
+ * - Inicialização e configuração da aplicação React
+ * - Integração com framework SharePoint (SPFx)
+ * - Gerenciamento de propriedades e configurações
+ * - Lifecycle management da web part
+ * 
+ * Arquitetura Enterprise:
+ * ✅ BaseClientSideWebPart para conformidade SPFx
+ * ✅ React 17+ com TypeScript strict mode
+ * ✅ Property pane configurável
+ * ✅ Theme support integrado
+ * ✅ Responsive design otimizado
+ * 
+ * Padrões SPFx:
+ * - Lifecycle hooks implementados
+ * - Context injection para serviços
+ * - Property validation e serialization
+ */
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version } from '@microsoft/sp-core-library';
@@ -11,6 +33,11 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import * as strings from 'PedidoFeriasWebPartStrings';
 import PedidoFerias from './components/PedidoFerias';
 import { IPedidoFeriasProps } from './components/IPedidoFeriasProps';
+
+/**
+ * 📋 Interface para propriedades configuráveis da Web Part
+ * Define campos personalizáveis pelo administrador
+ */
 
 export interface IPedidoFeriasWebPartProps {
   description: string;

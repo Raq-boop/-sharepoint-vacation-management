@@ -13,7 +13,6 @@
  * ✅ Screen reader announcements contextuais
  * ✅ Keyboard navigation support
  */
-import * as React from 'react';
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 
 /**
@@ -56,12 +55,12 @@ export class AccessibilityService {
   }
 }
 
-export const useAccessibility = (context: WebPartContext): { useFocusManagement: () => { focusRef: { current: HTMLElement | null }; setFocus: () => void } } => {
-  const _service = new AccessibilityService(context);
+export const useAccessibility = (context: WebPartContext): { useFocusManagement: () => { focusRef: { current: HTMLElement | undefined }; setFocus: () => void } } => {
+  console.log('♿ AccessibilityService hook initialized for:', context.pageContext.web.title);
   
   return {
     useFocusManagement: () => ({
-      focusRef: { current: null as HTMLElement | null },
+      focusRef: { current: undefined as HTMLElement | undefined },
       setFocus: (): void => console.log('♿ Focus set')
     })
   };

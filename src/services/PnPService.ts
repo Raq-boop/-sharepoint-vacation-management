@@ -1,3 +1,24 @@
+/**
+ * 🔗 PnPService - Serviço Enterprise de Integração SharePoint
+ * 
+ * Serviço responsável por toda comunicação com SharePoint Online:
+ * - CRUD completo de pedidos de férias
+ * - Operações batch para performance otimizada
+ * - Tratamento robusto de erros e retry logic
+ * - Configuração automática de listas SharePoint
+ * 
+ * Funcionalidades Enterprise:
+ * ✅ Integração PnP JS v3 com SPFx context
+ * ✅ Type safety completo com TypeScript
+ * ✅ Error handling e logging estruturado
+ * ✅ Performance otimizada com caching
+ * ✅ Configuração automática de infraestrutura
+ * 
+ * Padrões Implementados:
+ * - Repository pattern para abstração de dados
+ * - Dependency injection via SPFx context
+ * - SOLID principles e clean architecture
+ */
 import { spfi, SPFx, SPFI } from "@pnp/sp";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
@@ -6,11 +27,16 @@ import "@pnp/sp/site-users";
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IPedidoFerias, EstadoPedido } from '../models/IPedidoFerias';
 
-// Tipo para itens do SharePoint (usando Record para evitar warnings de any)
+// 🏷️ Tipo para itens do SharePoint (usando Record para type safety)
 type SharePointItem = Record<string, unknown>;
 
-// Configuração de logging seguro
+// 📝 Configuração de logging estruturado para debugging
 const LOG_SOURCE = "PnPService";
+
+/**
+ * 🏗️ Classe principal do serviço de integração SharePoint
+ * Centraliza todas as operações de dados do sistema
+ */
 
 export class PnPService {
   private _sp: SPFI;

@@ -1,3 +1,26 @@
+/**
+ * 🏖️ Sistema Enterprise de Pedidos de Férias - Componente Principal
+ * 
+ * Componente React principal do sistema de gestão de férias corporativo.
+ * Implementa funcionalidades enterprise completas:
+ * 
+ * 🚀 Funcionalidades Core:
+ * - CRUD completo de pedidos de férias
+ * - Interface responsiva e acessível (WCAG 2.1 AA)
+ * - Validação avançada de formulários
+ * - Estados de carregamento e erro otimizados
+ * 
+ * 🔧 Serviços Enterprise Integrados:
+ * - TelemetryService: Monitoramento e métricas
+ * - AccessibilityService: Conformidade WCAG 2.1
+ * - PnPService: Integração SharePoint robusta
+ * 
+ * 🎯 Padrões Implementados:
+ * - React Hooks para gerenciamento de estado
+ * - TypeScript strict para type safety
+ * - Error boundaries e tratamento de exceções
+ * - Performance otimizada com useMemo/useCallback
+ */
 import * as React from 'react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import styles from './PedidoFerias.module.scss';
@@ -12,38 +35,65 @@ import { DefaultButton, PrimaryButton } from '@fluentui/react/lib/Button';
 import { Dialog, DialogType, DialogFooter } from '@fluentui/react/lib/Dialog';
 import { TextField } from '@fluentui/react/lib/TextField';
 
+/**
+ * 🔍 Interface para controle de filtros avançados
+ * Permite pesquisa e filtragem granular dos pedidos
+ */
 interface IFilterState {
-  colaborador: string;
-  status: string;
-  searchTerm: string;
-  sortBy: string;
+  colaborador: string;  // Filtro por nome do colaborador
+  status: string;       // Filtro por status do pedido
+  searchTerm: string;   // Termo de busca geral
+  sortBy: string;       // Campo para ordenação
 }
 
+/**
+ * ⚠️ Interface para gerenciamento centralizado de erros
+ * Padroniza exibição de mensagens para o usuário
+ */
 interface IErrorState {
-  show: boolean;
-  message: string;
-  type: MessageBarType;
+  show: boolean;           // Controla visibilidade da mensagem
+  message: string;         // Texto da mensagem de erro
+  type: MessageBarType;    // Tipo visual da mensagem (error, warning, info)
 }
 
+/**
+ * 💬 Interface para controle de diálogos de confirmação
+ * Gerencia workflows de aprovação/rejeição
+ */
 interface IDialogState {
-  show: boolean;
-  type: 'approve' | 'reject';
-  pedidoId: number | undefined;
-  rejectionReason: string;
+  show: boolean;                        // Controla visibilidade do diálogo
+  type: 'approve' | 'reject';          // Tipo de ação (aprovar ou rejeitar)
+  pedidoId: number | undefined;        // ID do pedido sendo processado
+  rejectionReason: string;             // Motivo da rejeição (quando aplicável)
 }
+
+/**
+ * 🏗️ Componente Principal - Sistema de Pedidos de Férias
+ * 
+ * @param props - Propriedades do componente incluindo contexto SPFx
+ * @returns JSX.Element - Interface completa do sistema
+ */
 
 const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
-  // 🔧 Inicialização dos serviços avançados
+  // 🔧 Inicialização dos serviços enterprise avançados
+  // Serviços centralizados para observabilidade e acessibilidade
   const telemetryService = useMemo(() => new TelemetryService(props.context), [props.context]);
   const { useFocusManagement } = useAccessibility(props.context);
   useTelemetry(telemetryService);
   useFocusManagement();
   
-  // Estados do componente
-  const [pedidos, setPedidos] = useState<IPedidoFerias[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [processing, setProcessing] = useState<boolean>(false);
-  const [error, setError] = useState<IErrorState>({ show: false, message: '', type: MessageBarType.error });
+  // 📊 Estados principais do componente
+  // Gerenciamento centralizado de estado com TypeScript strict
+  const [pedidos, setPedidos] = useState<IPedidoFerias[]>([]);          // Lista de pedidos carregados
+  const [loading, setLoading] = useState<boolean>(true);                // Estado de carregamento inicial
+  const [processing, setProcessing] = useState<boolean>(false);         // Estado de processamento de ações
+  const [error, setError] = useState<IErrorState>({                     // Gerenciamento centralizado de erros
+    show: false, 
+    message: '', 
+    type: MessageBarType.error 
+  });
+  
+  // 🔍 Estados de filtros e pesquisa avançada
   const [filters, setFilters] = useState<IFilterState>({
     colaborador: '',
     status: '',
