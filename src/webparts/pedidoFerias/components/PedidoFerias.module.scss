@@ -48,6 +48,114 @@
     font-weight: 300;
   }
 
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+    
+    h1 {
+      @include ms-font-xxl;
+      color: white;
+      margin: 0 0 10px 0;
+      font-weight: 600;
+    }
+    
+    p {
+      @include ms-font-l;
+      color: rgba(255, 255, 255, 0.9);
+      margin: 0;
+    }
+  }
+
+  .vacationGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .vacationCard {
+    background: linear-gradient(135deg, #ffeb3b 0%, #ffc107 100%);
+    border-radius: 12px;
+    padding: 20px;
+    color: #333;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    h3 {
+      margin: 10px 0 5px 0;
+      font-weight: 600;
+      color: #333;
+    }
+
+    p {
+      margin: 0 0 15px 0;
+      color: #666;
+      font-size: 14px;
+    }
+  }
+
+  .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .dates {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #333;
+  }
+
+  .statusPending {
+    background: #ff9800;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    text-transform: none;
+  }
+
+  .statusApproved {
+    background: #4caf50;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    text-transform: none;
+  }
+
+  .statusRejected {
+    background: #f44336;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    text-transform: none;
+  }
+
   .employeeCard {
     background: white;
     border-radius: 8px;
@@ -627,7 +735,6 @@
     from { opacity: 0; transform: translateX(-20px); }
     to { opacity: 1; transform: translateX(0); }
   }
-}
 
 // Responsividade
 @media (max-width: 768px) {
