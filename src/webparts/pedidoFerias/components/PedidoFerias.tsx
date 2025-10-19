@@ -58,13 +58,14 @@ interface IErrorState {
 
 /**
  * 💬 Interface para controle de diálogos de confirmação
- * Gerencia workflows de aprovação/rejeição
+ * Gerencia workflows de aprovação/rejeição/reversão
  */
 interface IDialogState {
   show: boolean;                        // Controla visibilidade do diálogo
-  type: 'approve' | 'reject';          // Tipo de ação (aprovar ou rejeitar)
+  type: 'approve' | 'reject' | 'revert';          // Tipo de ação (aprovar, rejeitar ou reverter)
   pedidoId: number | undefined;        // ID do pedido sendo processado
   rejectionReason: string;             // Motivo da rejeição (quando aplicável)
+  currentStatus: string;               // Status atual para reversão
 }
 
 /**
@@ -104,7 +105,8 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
     show: false,
     type: 'approve',
     pedidoId: undefined,
-    rejectionReason: ''
+    rejectionReason: '',
+    currentStatus: ''
   });
 
   // Serviço PnP
@@ -515,6 +517,86 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
     }
   }, [pnpService, props.userDisplayName, pedidos, loadPedidos]);
 
+  /**
+   * 🔄 Reverte status de pedido para Pendente
+   * Permite correção de decisões de aprovação/rejeição
+   * 
+   * @param id - ID do pedido a ser revertido
+   * @param currentStatus - Status atual do pedido
+   */
+  const handleRevert = useCallback(async (id: number, currentStatus: string) => {
+    // 🔧 Validação de segurança
+    if (!id || (currentStatus !== 'Aprovado' && currentStatus !== 'Rejeitado')) {
+      setError({
+        show: true,
+        message: 'Apenas pedidos aprovados ou rejeitados podem ser revertidos.',
+        type: MessageBarType.warning
+      });
+      return;
+    }
+
+    setProcessing(true);
+    
+    try {
+      // 📊 Telemetria para rastreamento de reversões
+      telemetryService.trackEvent('PedidoReversao', {
+        pedidoId: id.toString(),
+        statusAnterior: currentStatus,
+        statusNovo: 'Pendente'
+      });
+
+      // 🔄 Reverter status no SharePoint
+      await pnpService.updateListItem('PedidoFerias', id, {
+        Estado: EstadoPedido.Pendente,
+        AprovadoPor: '', // Limpar aprovador
+        MotivoRejeicao: '', // Limpar motivo de rejeição
+        DataAprovacao: undefined // Limpar data de aprovação
+      });
+
+      // 🔄 Atualizar lista local
+      setPedidos(prev => prev.map(p => {
+        if (p.Id === id) {
+          return {
+            ...p,
+            Estado: EstadoPedido.Pendente,
+            AprovadoPor: undefined,
+            MotivoRejeicao: '',
+            DataAprovacao: undefined
+          };
+        }
+        return p;
+      }));
+
+      // ✅ Feedback de sucesso
+      setError({
+        show: true,
+        message: `Pedido revertido para Pendente com sucesso! Status anterior: ${currentStatus}`,
+        type: MessageBarType.success
+      });
+
+      // 📊 Log de auditoria
+      console.log(`🔄 Pedido ${id} revertido de ${currentStatus} para Pendente`);
+      
+    } catch (error) {
+      // ❌ Tratamento de erro
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido ao reverter pedido';
+      
+      setError({
+        show: true,
+        message: `Erro ao reverter pedido: ${errorMessage}`,
+        type: MessageBarType.error
+      });
+
+      // 📊 Telemetria de erro
+      telemetryService.trackException(error instanceof Error ? error : new Error(errorMessage));
+      
+      console.error('❌ Erro ao reverter pedido:', error);
+    } finally {
+      setProcessing(false);
+      setDialog({ show: false, type: 'approve', pedidoId: undefined, rejectionReason: '', currentStatus: '' });
+    }
+  }, [pnpService, telemetryService]);
+
   // Filtrar e ordenar pedidos
   const filteredAndSortedPedidos = useMemo(() => {
     let filtered = [...pedidos];
@@ -571,15 +653,19 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
 
   // Handlers para diálogos
   const openApproveDialog = (id: number): void => {
-    setDialog({ show: true, type: 'approve', pedidoId: id, rejectionReason: '' });
+    setDialog({ show: true, type: 'approve', pedidoId: id, rejectionReason: '', currentStatus: '' });
   };
 
   const openRejectDialog = (id: number): void => {
-    setDialog({ show: true, type: 'reject', pedidoId: id, rejectionReason: '' });
+    setDialog({ show: true, type: 'reject', pedidoId: id, rejectionReason: '', currentStatus: '' });
+  };
+
+  const openRevertDialog = (id: number, currentStatus: string): void => {
+    setDialog({ show: true, type: 'revert', pedidoId: id, rejectionReason: '', currentStatus });
   };
 
   const closeDialog = (): void => {
-    setDialog({ show: false, type: 'approve', pedidoId: undefined, rejectionReason: '' });
+    setDialog({ show: false, type: 'approve', pedidoId: undefined, rejectionReason: '', currentStatus: '' });
   };
 
   const confirmAction = async (): Promise<void> => {
@@ -587,8 +673,10 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
     
     if (dialog.type === 'approve') {
       await handleApprove(dialog.pedidoId);
-    } else {
+    } else if (dialog.type === 'reject') {
       await handleReject(dialog.pedidoId, dialog.rejectionReason);
+    } else if (dialog.type === 'revert') {
+      await handleRevert(dialog.pedidoId, dialog.currentStatus);
     }
     
     // Fechar dialog após ação
@@ -740,6 +828,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
             };
 
             const canApproveReject = pedido.Estado === EstadoPedido.Pendente && !processing;
+            const canRevert = (pedido.Estado === EstadoPedido.Aprovado || pedido.Estado === EstadoPedido.Rejeitado) && !processing;
             const initials = pedido.Colaborador.Title.split(' ').map((n: string) => n[0]).join('').toUpperCase();
             const isProcessingThis = processing && dialog.pedidoId === pedido.Id;
 
@@ -780,20 +869,38 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
                     </div>
                   )}
                   <div className={styles.actionButtons}>
-                    <button 
-                      className={styles.approveBtn} 
-                      disabled={!canApproveReject || isProcessingThis}
-                      onClick={() => openApproveDialog(pedido.Id)}
-                    >
-                      {isProcessingThis && dialog.type === 'approve' ? '⏳ Aprovando...' : '✓ Aprovar'}
-                    </button>
-                    <button 
-                      className={styles.rejectBtn} 
-                      disabled={!canApproveReject || isProcessingThis}
-                      onClick={() => openRejectDialog(pedido.Id)}
-                    >
-                      {isProcessingThis && dialog.type === 'reject' ? '⏳ Rejeitando...' : '✗ Rejeitar'}
-                    </button>
+                    {/* Botões para pedidos pendentes */}
+                    {canApproveReject && (
+                      <>
+                        <button 
+                          className={styles.approveBtn} 
+                          disabled={isProcessingThis}
+                          onClick={() => openApproveDialog(pedido.Id)}
+                        >
+                          {isProcessingThis && dialog.type === 'approve' ? '⏳ Aprovando...' : '✓ Aprovar'}
+                        </button>
+                        <button 
+                          className={styles.rejectBtn} 
+                          disabled={isProcessingThis}
+                          onClick={() => openRejectDialog(pedido.Id)}
+                        >
+                          {isProcessingThis && dialog.type === 'reject' ? '⏳ Rejeitando...' : '✗ Rejeitar'}
+                        </button>
+                      </>
+                    )}
+                    
+                    {/* Botão de reversão para pedidos finalizados */}
+                    {canRevert && (
+                      <button 
+                        className={styles.revertBtn} 
+                        disabled={isProcessingThis}
+                        onClick={() => openRevertDialog(pedido.Id, pedido.Estado)}
+                        title={`Reverter de ${pedido.Estado} para Pendente`}
+                      >
+                        {isProcessingThis && dialog.type === 'revert' ? '⏳ Revertendo...' : '🔄 Reverter para Pendente'}
+                      </button>
+                    )}
+                    
                     <button className={styles.detailsBtn}>
                       👁 Detalhes
                     </button>
@@ -810,10 +917,12 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
           onDismiss={closeDialog}
           dialogContentProps={{
             type: DialogType.normal,
-            title: dialog.type === 'approve' ? 'Confirmar Aprovação' : 'Confirmar Rejeição',
-            subText: dialog.type === 'approve' 
-              ? 'Tem certeza que deseja aprovar este pedido de férias?' 
-              : 'Tem certeza que deseja rejeitar este pedido de férias?'
+            title: dialog.type === 'approve' ? 'Confirmar Aprovação' : 
+                   dialog.type === 'reject' ? 'Confirmar Rejeição' : 
+                   'Confirmar Reversão',
+            subText: dialog.type === 'approve' ? 'Tem certeza que deseja aprovar este pedido de férias?' :
+                     dialog.type === 'reject' ? 'Tem certeza que deseja rejeitar este pedido de férias?' :
+                     `Tem certeza que deseja reverter este pedido de ${dialog.currentStatus} para Pendente?`
           }}
         >
           {dialog.type === 'reject' && (
@@ -827,10 +936,29 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
               required
             />
           )}
+          
+          {dialog.type === 'revert' && (
+            <div style={{ 
+              padding: '12px', 
+              backgroundColor: '#fff4e6', 
+              border: '1px solid #ff6b35', 
+              borderRadius: '4px',
+              marginTop: '16px'
+            }}>
+              <p style={{ margin: 0, color: '#d83b01' }}>
+                <strong>⚠️ Atenção:</strong> Esta ação irá reverter o pedido para status Pendente, 
+                removendo a decisão anterior de {dialog.currentStatus.toLowerCase()}. 
+                O pedido poderá ser aprovado ou rejeitado novamente.
+              </p>
+            </div>
+          )}
+          
           <DialogFooter>
             <PrimaryButton 
               onClick={confirmAction} 
-              text={dialog.type === 'approve' ? 'Aprovar' : 'Rejeitar'}
+              text={dialog.type === 'approve' ? 'Aprovar' : 
+                    dialog.type === 'reject' ? 'Rejeitar' : 
+                    'Reverter'}
               disabled={processing || (dialog.type === 'reject' && !dialog.rejectionReason.trim())}
             />
             <DefaultButton onClick={closeDialog} text="Cancelar" />

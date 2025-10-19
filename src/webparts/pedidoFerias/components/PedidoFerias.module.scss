@@ -338,6 +338,30 @@
       }
     }
     
+    .revertBtn {
+      background: #ff6b35;
+      color: white;
+      border: 1px solid #e55a2b;
+      font-weight: 500;
+      
+      &:hover:not(:disabled) {
+        background: #e55a2b;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(229, 90, 43, 0.3);
+      }
+      
+      &:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(229, 90, 43, 0.2);
+      }
+      
+      &:disabled {
+        background: #d1d5db;
+        color: #9ca3af;
+        cursor: not-allowed;
+      }
+    }
+    
     .detailsBtn {
       background: #f3f4f6;
       color: #374151;
