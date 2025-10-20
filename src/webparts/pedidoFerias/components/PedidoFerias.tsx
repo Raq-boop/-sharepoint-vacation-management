@@ -110,6 +110,10 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
     currentStatus: ''
   });
 
+  // Estado para controle de detalhes
+  const [selectedPedido, setSelectedPedido] = useState<IPedidoFerias | null>(null);
+  const [showDetails, setShowDetails] = useState<boolean>(false);
+
   // Serviço PnP
   const pnpService = useMemo(() => {
     return new PnPService(props.context);
@@ -685,6 +689,17 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
     setDialog({ show: false, type: 'approve', pedidoId: undefined, rejectionReason: '', currentStatus: '' });
   };
 
+  // Handlers para detalhes
+  const openDetails = (pedido: IPedidoFerias): void => {
+    setSelectedPedido(pedido);
+    setShowDetails(true);
+  };
+
+  const closeDetails = (): void => {
+    setSelectedPedido(null);
+    setShowDetails(false);
+  };
+
   const confirmAction = async (): Promise<void> => {
     if (!dialog.pedidoId) return;
     
@@ -937,7 +952,11 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
                       </button>
                     )}
                     
-                    <button className={styles.detailsBtn}>
+                    <button 
+                      className={styles.detailsBtn}
+                      onClick={() => openDetails(pedido)}
+                      title="Ver detalhes do pedido"
+                    >
                       👁 Detalhes
                     </button>
                   </div>
@@ -998,6 +1017,117 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
               disabled={processing || (dialog.type === 'reject' && !dialog.rejectionReason.trim())}
             />
             <DefaultButton onClick={closeDialog} text="Cancelar" />
+          </DialogFooter>
+        </Dialog>
+
+        {/* Modal de detalhes */}
+        <Dialog
+          hidden={!showDetails}
+          onDismiss={closeDetails}
+          dialogContentProps={{
+            type: DialogType.largeHeader,
+            title: '👁 Detalhes do Pedido de Férias',
+            subText: selectedPedido ? `Informações completas do pedido #${selectedPedido.Id}` : ''
+          }}
+          minWidth={600}
+          maxWidth={800}
+        >
+          {selectedPedido && (
+            <div className={styles.detailsContent}>
+              <div className={styles.detailsSection}>
+                <h3>📋 Informações Gerais</h3>
+                <div className={styles.detailsGrid}>
+                  <div className={styles.detailsItem}>
+                    <strong>ID do Pedido:</strong>
+                    <span>#{selectedPedido.Id}</span>
+                  </div>
+                  <div className={styles.detailsItem}>
+                    <strong>Colaborador:</strong>
+                    <span>{selectedPedido.Colaborador?.Title || selectedPedido.Title}</span>
+                  </div>
+                  <div className={styles.detailsItem}>
+                    <strong>Estado Atual:</strong>
+                    <span className={`${styles.status} ${styles[`status${selectedPedido.Estado}`]}`}>
+                      {selectedPedido.Estado}
+                    </span>
+                  </div>
+                  <div className={styles.detailsItem}>
+                    <strong>Email:</strong>
+                    <span>{selectedPedido.Colaborador?.EMail || 'Não informado'}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.detailsSection}>
+                <h3>📅 Período de Férias</h3>
+                <div className={styles.detailsGrid}>
+                  <div className={styles.detailsItem}>
+                    <strong>Data de Início:</strong>
+                    <span>{selectedPedido.DataInicio}</span>
+                  </div>
+                  <div className={styles.detailsItem}>
+                    <strong>Data de Fim:</strong>
+                    <span>{selectedPedido.DataFim}</span>
+                  </div>
+                  <div className={styles.detailsItem}>
+                    <strong>Total de Dias:</strong>
+                    <span>{selectedPedido.DiasTotal} dias</span>
+                  </div>
+                  <div className={styles.detailsItem}>
+                    <strong>Data de Solicitação:</strong>
+                    <span>{selectedPedido.DataSolicitacao}</span>
+                  </div>
+                </div>
+              </div>
+
+              {selectedPedido.Motivo && (
+                <div className={styles.detailsSection}>
+                  <h3>📝 Motivo/Justificativa</h3>
+                  <div className={styles.observacoes}>
+                    {selectedPedido.Motivo}
+                  </div>
+                </div>
+              )}
+
+              {selectedPedido.Observacoes && (
+                <div className={styles.detailsSection}>
+                  <h3>💬 Observações</h3>
+                  <div className={styles.observacoes}>
+                    {selectedPedido.Observacoes}
+                  </div>
+                </div>
+              )}
+
+              <div className={styles.detailsSection}>
+                <h3>📊 Informações do Sistema</h3>
+                <div className={styles.detailsGrid}>
+                  <div className={styles.detailsItem}>
+                    <strong>Data de Criação:</strong>
+                    <span>{selectedPedido.Created}</span>
+                  </div>
+                  <div className={styles.detailsItem}>
+                    <strong>Última Modificação:</strong>
+                    <span>{selectedPedido.Modified}</span>
+                  </div>
+                  {selectedPedido.DataAprovacao && (
+                    <div className={styles.detailsItem}>
+                      <strong>Data de Decisão:</strong>
+                      <span>{selectedPedido.DataAprovacao}</span>
+                    </div>
+                  )}
+                  {selectedPedido.AprovadoPor && (
+                    <div className={styles.detailsItem}>
+                      <strong>Decisão Por:</strong>
+                      <span>{selectedPedido.AprovadoPor.Title}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <DefaultButton onClick={closeDetails} text="Fechar" />
           </DialogFooter>
         </Dialog>
       </div>
