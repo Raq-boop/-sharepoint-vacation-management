@@ -26,7 +26,7 @@ import "@pnp/sp/items";
 import "@pnp/sp/site-users";
 import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { IPedidoFerias, EstadoPedido } from '../models/IPedidoFerias';
-import { MockDataService } from './MockDataService';
+// MockDataService removido para versão de produção. Chamadas a dados de exemplo foram desativadas.
 
 // 🏷️ Tipo para itens do SharePoint (usando Record para type safety)
 type SharePointItem = Record<string, unknown>;
@@ -76,9 +76,11 @@ export class PnPService {
       
       // Detectar erros de conexão e ativar modo de demonstração
       if (this.isConnectionError(error)) {
-        console.warn('⚠️ Não foi possível conectar ao SharePoint. Usando dados de exemplo para demonstração.');
-        this._useMockData = true;
-        this._connectionError = 'Não foi possível conectar ao SharePoint. Usando dados de exemplo para demonstração.';
+        console.warn('⚠️ Não foi possível conectar ao SharePoint. Conectividade perdida; não ativando dados de exemplo automaticamente.');
+        // Em produção não ativamos o modo de demo automaticamente.
+        // Para desenvolvimento, ative manualmente via PnPService.enableMockDataForDev(true).
+        // this._useMockData = true; // removido intencionalmente
+        this._connectionError = 'Não foi possível conectar ao SharePoint.';
       }
       
       return undefined;
@@ -116,6 +118,15 @@ export class PnPService {
    */
   public isUsingMockData(): boolean {
     return this._useMockData;
+  }
+
+  /**
+   * Habilita/desabilita o uso de dados mock manualmente (apenas para desenvolvimento).
+   * Chame este método em ambiente de desenvolvedor para testes locais.
+   */
+  public enableMockDataForDev(enable: boolean): void {
+    this._useMockData = !!enable;
+    console.info(`${LOG_SOURCE} - Mock data manually ${this._useMockData ? 'enabled' : 'disabled'}`);
   }
 
   /**
@@ -250,9 +261,10 @@ export class PnPService {
    * Obtém todos os pedidos de férias da lista SharePoint
    */
   public async getPedidosFerias(): Promise<IPedidoFerias[]> {
-    // Se já está usando dados de exemplo, retorna diretamente
+    // Não suportamos mais dados de exemplo automáticos no código de produção.
     if (this._useMockData) {
-      return await MockDataService.getPedidosFerias();
+      console.warn(`${LOG_SOURCE} - Mock data was requested but MockDataService was removed. Returning empty list.`);
+      return [];
     }
 
     await this.initializeList(); // Garantir que a lista existe
@@ -293,9 +305,10 @@ export class PnPService {
       'Erro ao obter pedidos de férias'
     );
 
-    // Se falhou a conexão, usar dados de exemplo
+    // Se falhou a conexão e mock estava ativo, retornar vazio (não usar mock automático)
     if (result === undefined && this._useMockData) {
-      return await MockDataService.getPedidosFerias();
+      console.warn(`${LOG_SOURCE} - Request failed and mock was enabled; returning empty list.`);
+      return [];
     }
 
     return result || [];
@@ -305,9 +318,10 @@ export class PnPService {
    * Cria um novo pedido de férias
    */
   public async createPedidoFerias(pedido: Omit<IPedidoFerias, 'Id' | 'Created' | 'Modified' | 'Author' | 'Editor'>): Promise<number | undefined> {
-    // Se já está usando dados de exemplo, criar no mock
+    // Não suportamos mais criação em mock automático. Se mock estiver ativo, retorna undefined.
     if (this._useMockData) {
-      return await MockDataService.createPedidoFerias(pedido);
+      console.warn(`${LOG_SOURCE} - createPedidoFerias called while mock enabled, but MockDataService was removed.`);
+      return undefined;
     }
 
     await this.initializeList();
@@ -332,9 +346,10 @@ export class PnPService {
       'Erro ao criar pedido de férias'
     );
 
-    // Se falhou a conexão, criar no mock
+    // Se falhou a conexão e mock estava ativo, não criamos nada
     if (result === undefined && this._useMockData) {
-      return await MockDataService.createPedidoFerias(pedido);
+      console.warn(`${LOG_SOURCE} - create failed and mock was enabled; not creating in mock.`);
+      return undefined;
     }
 
     return result;
@@ -520,10 +535,10 @@ export class PnPService {
    * Método para atualizar um item em uma lista de forma segura
    */
   public async updateListItem(listTitle: string, itemId: number, itemData: Record<string, unknown>): Promise<unknown> {
-    // Se já está usando dados de exemplo, atualizar no mock
+    // Não suportamos mais atualização em mock automático.
     if (this._useMockData) {
-      await MockDataService.updateListItem(itemId, itemData as Partial<IPedidoFerias>);
-      return { success: true };
+      console.warn(`${LOG_SOURCE} - updateListItem called while mock enabled, but MockDataService was removed.`);
+      return { success: false };
     }
 
     const result = await this.executeWithErrorHandling(
@@ -534,10 +549,10 @@ export class PnPService {
       `Erro ao atualizar item ${itemId} na lista ${listTitle}`
     );
 
-    // Se falhou a conexão, atualizar no mock
+    // Se falhou a conexão e mock estava ativo, não atualizamos no mock
     if (result === undefined && this._useMockData) {
-      await MockDataService.updateListItem(itemId, itemData as Partial<IPedidoFerias>);
-      return { success: true };
+      console.warn(`${LOG_SOURCE} - update failed and mock was enabled; not updating in mock.`);
+      return { success: false };
     }
 
     return result;
@@ -547,10 +562,10 @@ export class PnPService {
    * Método para deletar um item de uma lista de forma segura
    */
   public async deleteListItem(listTitle: string, itemId: number): Promise<boolean> {
-    // Se já está usando dados de exemplo, deletar do mock
+    // Não suportamos mais deleção em mock automático.
     if (this._useMockData) {
-      await MockDataService.deletePedidoFerias(itemId);
-      return true;
+      console.warn(`${LOG_SOURCE} - deleteListItem called while mock enabled, but MockDataService was removed.`);
+      return false;
     }
 
     const result = await this.executeWithErrorHandling(
@@ -561,10 +576,10 @@ export class PnPService {
       `Erro ao deletar item ${itemId} da lista ${listTitle}`
     );
 
-    // Se falhou a conexão, deletar do mock
+    // Se falhou a conexão e mock estava ativo, não deletamos no mock
     if (result === undefined && this._useMockData) {
-      await MockDataService.deletePedidoFerias(itemId);
-      return true;
+      console.warn(`${LOG_SOURCE} - delete failed and mock was enabled; not deleting in mock.`);
+      return false;
     }
 
     return result || false;

@@ -26,8 +26,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import styles from './PedidoFerias.module.scss';
 import type { IPedidoFeriasProps } from './IPedidoFeriasProps';
 import { PnPService } from '../../../services/PnPService';
-import { TelemetryService, useTelemetry } from '../../../services/TelemetryService';
-import { useAccessibility } from '../../../services/AccessibilityService';
+// Telemetry and Accessibility services removed for simplified build
 import { IPedidoFerias, EstadoPedido } from '../../../models/IPedidoFerias';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import { MessageBar, MessageBarType } from '@fluentui/react/lib/MessageBar';
@@ -76,12 +75,12 @@ interface IDialogState {
  */
 
 const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
+  // Controle manual de demo (apenas para desenvolvedores).
+  // Defina true localmente caso precise forçar dados de exemplo para desenvolvimento.
+  const ALLOW_DEMO = false;
   // 🔧 Inicialização dos serviços enterprise avançados
   // Serviços centralizados para observabilidade e acessibilidade
-  const telemetryService = useMemo(() => new TelemetryService(props.context), [props.context]);
-  const { useFocusManagement } = useAccessibility(props.context);
-  useTelemetry(telemetryService);
-  useFocusManagement();
+  // Removed telemetry and accessibility initialization to simplify project
   
   // 📊 Estados principais do componente
   // Gerenciamento centralizado de estado com TypeScript strict
@@ -332,21 +331,23 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
           }, 3000);
         }
       } else {
-        console.log('📝 Nenhum pedido encontrado, usando dados de exemplo...');
-        setPedidos(getMockData());
+        console.log('📝 Nenhum pedido encontrado. Não será usado mock automaticamente.');
+        // Não usar dados de exemplo automaticamente em produção.
+        setPedidos([]);
         setError({
           show: true,
-          message: connectionError || '📝 Lista SharePoint vazia. Exibindo dados de exemplo para demonstração.',
+          message: connectionError || 'Lista SharePoint vazia. Nenhum dado disponível.',
           type: MessageBarType.info
         });
-        setIsUsingMockData(true);
+        setIsUsingMockData(false);
       }
       
     } catch (err) {
       console.error('❌ Erro ao carregar pedidos do SharePoint:', err);
       
-      // Usar dados mock como fallback
-      setPedidos(getMockData());
+  // Em erro, não usar dados mock automaticamente em produção.
+  // Para desenvolvimento, altere ALLOW_DEMO para true ou ative manualmente no PnPService.
+  setPedidos([]);
       
       // Mostrar erro específico baseado no tipo
       let errorMessage = '⚠️ Não foi possível conectar ao SharePoint. ';
@@ -359,10 +360,10 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
         } else if (err.message.indexOf('network') !== -1 || err.message.indexOf('fetch') !== -1) {
           errorMessage += 'Problemas de conectividade. Verifique sua conexão.';
         } else {
-          errorMessage += 'Usando dados de exemplo para demonstração.';
+          errorMessage += '';
         }
       } else {
-        errorMessage += 'Usando dados de exemplo para demonstração.';
+        errorMessage += '';
       }
       
       setError({
@@ -559,12 +560,8 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
     setProcessing(true);
     
     try {
-      // 📊 Telemetria para rastreamento de reversões
-      telemetryService.trackEvent('PedidoReversao', {
-        pedidoId: id.toString(),
-        statusAnterior: currentStatus,
-        statusNovo: 'Pendente'
-      });
+  // 📊 Telemetria para rastreamento de reversões
+  // telemetry removed: PedidoReversao event omitted in simplified build
 
       // 🔄 Reverter status no SharePoint
       await pnpService.updateListItem('PedidoFerias', id, {
@@ -609,14 +606,14 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
       });
 
       // 📊 Telemetria de erro
-      telemetryService.trackException(error instanceof Error ? error : new Error(errorMessage));
+  // telemetry removed: exception tracking omitted in simplified build
       
       console.error('❌ Erro ao reverter pedido:', error);
     } finally {
       setProcessing(false);
       setDialog({ show: false, type: 'approve', pedidoId: undefined, rejectionReason: '', currentStatus: '' });
     }
-  }, [pnpService, telemetryService]);
+  }, [pnpService]);
 
   // Filtrar e ordenar pedidos
   const filteredAndSortedPedidos = useMemo(() => {
@@ -749,19 +746,19 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
     <div className={styles.pedidoFerias}>
       <div className={styles.container}>
         {/* Banner de modo demonstração */}
-        {isUsingMockData && (
+        {(isUsingMockData && ALLOW_DEMO) && (
           <MessageBar
             messageBarType={MessageBarType.warning}
             isMultiline={true}
             className={styles.demoBanner}
           >
             <div className={styles.demoContent}>
-              <strong>🎭 MODO DEMONSTRAÇÃO</strong>
-              <p>⚠️ Não foi possível conectar ao SharePoint. Os dados mostrados são apenas para demonstração e não refletem informações reais.</p>
+              <strong>MODO DEMONSTRAÇÃO</strong>
+              <p>Não foi possível conectar ao SharePoint. Os dados mostrados são apenas para demonstração e não refletem informações reais.</p>
               <ul>
-                <li>✅ Todas as funcionalidades estão operacionais</li>
-                <li>📊 Dados são salvos localmente no navegador</li>
-                <li>🔄 Alterações serão perdidas ao recarregar a página</li>
+                <li>Todas as funcionalidades estão operacionais</li>
+                <li>Dados são salvos localmente no navegador</li>
+                <li>Alterações serão perdidas ao recarregar a página</li>
               </ul>
             </div>
           </MessageBar>
