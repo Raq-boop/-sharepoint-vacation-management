@@ -48,3 +48,6 @@ yarn-debug.log*
 yarn-error.log*
 .nyc_output/
 coverage-audit.json
+
+# Local archive folder (kept for reference) - ignore by git
+/ops/
