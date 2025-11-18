@@ -1,6 +1,0 @@
-name: Archived - Advanced CI/CD (moved)
-
-# Arquivo arquivado de advanced CI/CD. Mantido para referência e recuperação futura.
-# Originalmente contia security scans, trivy, code quality, build/package and deploy jobs.
-
-# Conteúdo movido para ops/archived para simplificar o fluxo principal.
