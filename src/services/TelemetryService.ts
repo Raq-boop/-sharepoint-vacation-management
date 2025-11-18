@@ -20,16 +20,21 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
  * Implementa padrões enterprise para observabilidade
  */
 export class TelemetryService {
-  private _context: WebPartContext;
+  private _context?: WebPartContext;
 
   /**
    * 🚀 Construtor - Inicializa o serviço com contexto SPFx
    * @param context - Contexto da web part para acessar propriedades e configurações
    */
-  constructor(context: WebPartContext) {
+  constructor(context?: WebPartContext) {
     this._context = context;
-    // 📝 Log de inicialização para debugging
-    console.log('🔧 TelemetryService initialized for:', context.pageContext.web.title);
+    // 📝 Log de inicialização para debugging (defensivo)
+    try {
+      const title = this._context?.pageContext?.web?.title || 'unknown';
+      console.log('TelemetryService initialized for:', title);
+    } catch {
+      console.log('TelemetryService initialized (no web context)');
+    }
   }
 
   /**
@@ -40,10 +45,10 @@ export class TelemetryService {
    */
   public trackEvent(name: string, properties?: { [key: string]: string }): void {
     // 🎯 Estrutura padronizada de logging para facilitar análise
-    console.log(`📊 Event: ${name}`, {
+    console.log(`Event: ${name}`, {
       timestamp: new Date().toISOString(),
-      user: this._context.pageContext.user.displayName,
-      site: this._context.pageContext.web.absoluteUrl,
+      user: this._context?.pageContext?.user?.displayName || 'unknown',
+      site: this._context?.pageContext?.web?.absoluteUrl || 'unknown',
       ...properties
     });
   }
@@ -55,13 +60,13 @@ export class TelemetryService {
    */
   public trackException(error: Error): void {
     // 🔍 Log detalhado com stack trace para diagnóstico
-    console.error('📊 Exception:', {
+    console.error('Exception:', {
       message: error.message,
       name: error.name,
       stack: error.stack,
       timestamp: new Date().toISOString(),
-      user: this._context.pageContext.user.displayName,
-      page: window.location.href
+      user: this._context?.pageContext?.user?.displayName || 'unknown',
+      page: (typeof window !== 'undefined' && window.location) ? window.location.href : 'unknown'
     });
   }
 
