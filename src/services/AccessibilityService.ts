@@ -45,10 +45,10 @@ export class AccessibilityService {
    */
   public announce(message: string, type: 'status' | 'error' | 'loading' = 'status'): void {
     // 🎯 Log estruturado para debugging de acessibilidade
-    console.log(`♿ Accessibility announcement (${type}): ${message}`, {
+    console.log(`Accessibility announcement (${type}): ${message}`, {
       timestamp: new Date().toISOString(),
       priority: type === 'error' ? 'assertive' : 'polite',
-      user: this._context.pageContext.user.displayName
+      user: this._context?.pageContext?.user?.displayName || 'unknown'
     });
     
     // 🔄 Em produção, aqui seria criada uma live region dinâmica
