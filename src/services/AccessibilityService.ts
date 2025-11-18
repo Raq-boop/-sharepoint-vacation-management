@@ -20,16 +20,17 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
  * Centraliza todas as funcionalidades de inclusão digital
  */
 export class AccessibilityService {
-  private _context: WebPartContext;
+  private _context?: WebPartContext;
 
   /**
    * 🚀 Construtor - Inicializa serviços de acessibilidade
    * @param context - Contexto SPFx para acesso a configurações
    */
-  constructor(context: WebPartContext) {
+  constructor(context?: WebPartContext) {
     this._context = context;
-    // 📝 Log de inicialização para auditoria de acessibilidade
-    console.log('♿ AccessibilityService initialized - WCAG 2.1 AA compliance active');
+    // 📝 Log de inicialização para auditoria de acessibilidade (defensivo)
+    const site = this._context?.pageContext?.web?.title || 'unknown';
+    console.log('AccessibilityService initialized for:', site);
   }
 
   /**
@@ -56,7 +57,7 @@ export class AccessibilityService {
 }
 
 export const useAccessibility = (context: WebPartContext): { useFocusManagement: () => { focusRef: { current: HTMLElement | undefined }; setFocus: () => void } } => {
-  console.log('♿ AccessibilityService hook initialized for:', context.pageContext.web.title);
+  console.log('Accessibility hook initialized for:', context?.pageContext?.web?.title || 'unknown');
   
   return {
     useFocusManagement: () => ({
