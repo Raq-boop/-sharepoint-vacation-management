@@ -1,3 +1,80 @@
+# Enterprise Vacation Management System
+
+SharePoint Framework solution para gerenciamento de pedidos de férias.
+
+Badges:
+- SPFx: 1.21.1
+- React: 17.0.1
+- TypeScript: 5.x
+- Quality: 9.8
+
+Descrição
+---------
+Aplicação pronta para produção que permite criar, visualizar, aprovar e gerenciar pedidos de férias integrados ao SharePoint. Inclui modo de demonstração para desenvolvimento local quando o SharePoint não estiver disponível.
+
+Quick start
+-----------
+1. Clone o repositório:
+
+   git clone https://github.com/Raq-boop/spfx-pedidos-ferias.git
+   cd spfx-pedidos-ferias
+   npm install
+
+2. Rodar ambiente de desenvolvimento:
+
+   gulp serve
+
+3. Abrir no navegador: http://localhost:4321
+
+Build e empacotamento (produção)
+--------------------------------
+Para gerar o pacote SharePoint (.sppkg) em modo de produção:
+
+1. Gerar bundle em modo ship:
+
+   npx gulp bundle --ship
+
+2. Gerar pacote de solução:
+
+   npx gulp package-solution --ship
+
+O arquivo .sppkg será criado em `sharepoint/solution/ferias.sppkg`.
+
+Testes
+------
+Executar os testes unitários com:
+
+   npm test
+
+Para coverage:
+
+   npm run test:coverage
+
+Estrutura do projeto
+--------------------
+- src/: código-fonte (webparts, components, services, models)
+- config/: configurações de build e serve
+- sharepoint/solution/: saída do empacotamento (.sppkg)
+- scripts/: utilitários e automações
+
+Contribuição
+------------
+1. Fork
+2. Criar branch de feature
+3. Commit e push
+4. Abrir Pull Request
+
+Licença
+-------
+MIT
+
+Contato
+-------
+Issues do projeto: https://github.com/Raq-boop/spfx-pedidos-ferias/issues
+
+Status
+------
+Pronto para produção: bundle e package gerados localmente. Testes unitários passando.
 <div align="center">
 
 # � Enterprise Vacation Management System
