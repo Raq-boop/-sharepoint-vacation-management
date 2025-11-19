@@ -35,7 +35,7 @@ import PedidoFerias from './components/PedidoFerias';
 import { IPedidoFeriasProps } from './components/IPedidoFeriasProps';
 
 /**
- * 📋 Interface para propriedades configuráveis da Web Part
+ * Interface para propriedades configuráveis da Web Part
  * Define campos personalizáveis pelo administrador
  */
 

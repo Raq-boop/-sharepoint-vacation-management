@@ -1,19 +1,19 @@
 # 🎭 Modo de Demonstração - Sistema de Pedidos de Férias
 
-## 📋 Visão Geral
+## Visão Geral
 
 O sistema possui um **modo de demonstração inteligente** que ativa automaticamente quando não há conexão disponível com o SharePoint, permitindo que todas as funcionalidades sejam testadas e demonstradas usando dados de exemplo.
 
-## 🚀 Funcionalidades do Modo Demo
+## Funcionalidades do Modo Demo
 
-### ✅ **Funcionalidades Completas**
-- ✨ Criar novos pedidos de férias
-- 📝 Visualizar lista completa de pedidos
-- ✅ Aprovar pedidos pendentes
-- ❌ Rejeitar pedidos com motivo
-- 🔄 Reverter status (Aprovado/Rejeitado → Pendente)
-- 🔍 Filtrar e pesquisar pedidos
-- 📊 Dashboard com métricas
+### Funcionalidades Completas
+- Criar novos pedidos de férias
+- Visualizar lista completa de pedidos
+- Aprovar pedidos pendentes
+- Rejeitar pedidos com motivo
+- Reverter status (Aprovado/Rejeitado → Pendente)
+- Filtrar e pesquisar pedidos
+- Dashboard com métricas
 
 ### 🎭 **Dados de Exemplo Inclusos**
 - **5 pedidos pré-configurados** com diferentes estados
@@ -22,9 +22,9 @@ O sistema possui um **modo de demonstração inteligente** que ativa automaticam
 - **Datas realistas** para demonstração
 - **Dados persistentes** via localStorage durante a sessão
 
-## 🔧 Como Funciona
+## Como Funciona
 
-### 🎯 **Ativação Automática**
+### Ativação Automática
 O modo demonstração ativa automaticamente quando:
 - Não há conexão com SharePoint disponível
 - Ocorrem erros de rede ou timeout
@@ -63,13 +63,13 @@ O modo demonstração ativa automaticamente quando:
 - Validação de lógica de negócio
 - Debug e troubleshooting
 
-### 🧪 **Testes**
+### Testes
 - Testes de aceitação do usuário
 - Validação de workflows
 - Testes de performance da interface
 - Verificação de responsividade
 
-## 🎯 Dados de Exemplo
+## Dados de Exemplo
 
 ### 👥 **Colaboradores**
 | Nome | Email | Status Exemplo |
@@ -80,14 +80,14 @@ O modo demonstração ativa automaticamente quando:
 | Ana Lima | ana.lima@empresa.com | Pedido Aprovado |
 | Roberto Oliveira | roberto.oliveira@empresa.com | Pedido Pendente |
 
-### 📊 **Cenários de Teste**
+### Cenários de Teste
 - **Aprovação**: Teste do fluxo de aprovação completo
 - **Rejeição**: Teste com motivos de rejeição
 - **Reversão**: Teste de mudança de status
 - **Filtros**: Teste de pesquisa e filtros
 - **Validações**: Teste de regras de negócio
 
-## 🔄 Como Sair do Modo Demo
+## Como Sair do Modo Demo
 
 ### 🌐 **Conexão com SharePoint**
 - Configurar ambiente SharePoint corretamente
@@ -95,28 +95,28 @@ O modo demonstração ativa automaticamente quando:
 - Validar configuração de listas
 - Testar conectividade de rede
 
-### 🔧 **Desenvolvimento**
+### Desenvolvimento
 - Configurar SPFx workbench corretamente
 - Usar `gulp serve` em ambiente com SharePoint
 - Verificar configurações do manifesto
 - Validar contexto do web part
 
-## ⚠️ Limitações do Modo Demo
+## Limitações do Modo Demo
 
 - **Dados temporários**: Perdidos ao recarregar página
 - **Sem persistência real**: Não salva no SharePoint
 - **Ambiente isolado**: Não afeta dados de produção
 - **Funcionalidades limitadas**: Algumas integrações avançadas podem não funcionar
 
-## 🛠️ Configuração Técnica
+## Configuração Técnica
 
-### 📝 **Arquivos Envolvidos**
+### Arquivos Envolvidos
 - `MockDataService.ts` - Serviço de dados de exemplo
 - `PnPService.ts` - Detecção e fallback automático
 - `PedidoFerias.tsx` - Interface com banner de aviso
 - `PedidoFerias.module.scss` - Estilos do modo demo
 
-### 🔍 **Detecção de Erro**
+### Detecção de Erro
 ```typescript
 // Erros que ativam modo demo:
 - Network errors
@@ -135,21 +135,21 @@ const STORAGE_KEY = 'mockPedidosFerias';
 localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 ```
 
-## 🎉 Vantagens do Sistema
+## Vantagens do Sistema
 
-### ✅ **Para Desenvolvedores**
+### Para Desenvolvedores
 - Desenvolvimento offline completo
 - Testes rápidos sem infraestrutura
 - Debug facilitado
 - Prototipagem ágil
 
-### ✅ **Para Usuários**
+### Para Usuários
 - Experiência consistente
 - Treinamento seguro
 - Demonstrações realistas
 - Feedback imediato
 
-### ✅ **Para Negócio**
+### Para Negócio
 - Apresentações profissionais
 - Validação de requisitos
 - Redução de riscos

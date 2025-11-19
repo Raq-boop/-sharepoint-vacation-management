@@ -1,6 +1,6 @@
-# 📋 SISTEMA DE PEDIDOS DE FÉRIAS - DOCUMENTAÇÃO TÉCNICA COMPLETA
+# SISTEMA DE PEDIDOS DE FÉRIAS - DOCUMENTAÇÃO TÉCNICA COMPLETA
 
-## 🎯 Visão Geral do Projeto
+## Visão Geral do Projeto
 
 Este projeto implementa um sistema completo de gerenciamento de pedidos de férias usando **SharePoint Framework (SPFx)** com integração ao **Microsoft Graph API** para fotos de usuários.
 
@@ -11,14 +11,14 @@ Sistema SPFx Pedidos de Férias
 ├── 🌐 SharePoint Framework 1.21.1
 ├── ⚛️ React 17.0.1 + TypeScript 5.3.3
 ├── 🎨 Fluent UI Components
-├── 📊 SharePoint Lists (PnP JS)
-├── 👤 Microsoft Graph API (Fotos)
-└── 🔧 Gulp Build System
+├── SharePoint Lists (PnP JS)
+├── Microsoft Graph API (Fotos)
+└── Gulp Build System
 ```
 
 ## 📁 Estrutura de Arquivos Detalhada
 
-### 🔧 **Arquivos de Configuração**
+### Arquivos de Configuração
 ```
 ├── package.json              # Dependências e scripts NPM
 ├── tsconfig.json             # Configuração TypeScript
@@ -29,7 +29,7 @@ Sistema SPFx Pedidos de Férias
     └── package-solution.json # Empacotamento solução
 ```
 
-### 📝 **Modelos e Interfaces TypeScript**
+### Modelos e Interfaces TypeScript
 ```
 src/models/
 └── IPedidoFerias.ts         # 🏗️ ARQUIVO PRINCIPAL DE TIPOS
@@ -43,7 +43,7 @@ src/models/
     └── IUserPermissions     # Controle permissões
 ```
 
-### 🛠️ **Serviços de Negócio**
+### Serviços de Negócio
 ```
 src/services/
 ├── GraphPhotoService.ts     # 📸 INTEGRAÇÃO MICROSOFT GRAPH
@@ -383,7 +383,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
 };
 ```
 
-## 🔧 **Configuração e Build**
+## Configuração e Build
 
 ### **package.json - Dependências Críticas**
 ```json
@@ -417,7 +417,7 @@ gulp package-solution --ship
 
 ## 🌟 **Funcionalidades Implementadas**
 
-### ✅ **Concluídas**
+### Concluídas
 - [x] **Estrutura TypeScript Completa** - Interfaces e tipos 100% tipados
 - [x] **Integração Microsoft Graph** - Fotos de usuários com cache
 - [x] **Componentes Fluent UI** - Interface moderna e responsiva  
@@ -427,14 +427,14 @@ gulp package-solution --ship
 - [x] **Tratamento de Erros** - Error boundaries e fallbacks
 - [x] **Cache de Fotos** - Otimização de performance
 
-### 🔄 **Em Desenvolvimento**
+### Em Desenvolvimento
 - [ ] **Integração SharePoint Lists** - CRUD real via PnP JS
 - [ ] **Formulário Criação** - Novo pedido com validações
 - [ ] **Sistema Aprovação** - Workflow gestor/colaborador
 - [ ] **Paginação** - Lista grande de pedidos
 - [ ] **Relatórios** - Dashboard com estatísticas
 
-## 🎯 **Pontos Técnicos Destacados para Entrevista**
+## Pontos Técnicos Destacados para Entrevista
 
 ### 1. **Arquitetura Modern Frontend**
 - **React Hooks**: useState, useEffect, useMemo para estado
@@ -466,7 +466,7 @@ gulp package-solution --ship
 - **TypeScript Compilation**: Verificação tipos
 - **Linting/Formatting**: Código padronizado
 
-## 🚀 **Como Executar o Projeto**
+## Como Executar o Projeto
 
 ```bash
 # 1. Instalar dependências

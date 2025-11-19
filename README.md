@@ -93,12 +93,12 @@ Pronto para produção: bundle e package gerados localmente. Testes unitários p
 
 ---
 
-## 💡 **What Makes This Special**
+## What Makes This Special
 
 This isn't just another vacation request system. It's a **production-ready enterprise solution** that works **everywhere, instantly** - no complex setup required.
 
 ```
-🚀 Clone → Install → Run → WORKS IN ANY BROWSER
+Clone → Install → Run → Works in any browser
    Takes 2 minutes, works everywhere, looks professional
 ```
 
@@ -110,7 +110,7 @@ This isn't just another vacation request system. It's a **production-ready enter
 <tr>
 <td width="50%">
 
-### 🎯 **Complete Vacation Management**
+### Complete Vacation Management
 - Full CRUD operations with smart validation
 - **Bidirectional workflow:** Approve → Reject → Revert
 - Real-time dashboard with live metrics
