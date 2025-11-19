@@ -344,107 +344,79 @@ config/                            # Enterprise configuration
 The system detects when SharePoint is not reachable and activates demo mode. Conditions include network errors, unavailable SharePoint, missing lists, or running in a local development environment.
 
 ### Included Sample Data
-| Colaborador | Status | Tipo de Férias |
-|------------|--------|----------------|
-| João Silva | Pendente | Férias de verão |
-| Maria Santos | Aprovado | Fim de ano |
-| Pedro Costa | Rejeitado | Férias escolares |
-| Ana Lima | Aprovado | Casamento |
-| Roberto Oliveira | Pendente | Carnaval |
+## Sistema de Pedidos de Férias
 
-### Use Cases
-- Training: users can train without impacting real data
-- Development: coding and debugging without SharePoint
-- Testing: validate functionality and UX
-- Prototyping: verify concepts and workflows
+Projeto SharePoint Framework (SPFx) para gerenciar pedidos de férias em um site SharePoint.
 
-### Cross-Browser Compatibility
-Works in modern browsers and is responsive across devices.
+Resumo rápido
+-------------
+- Suporta criação, visualização, aprovação, rejeição e reversão de pedidos de férias.
+- Modo de desenvolvimento com dados de exemplo quando o SharePoint não está disponível.
+- Projetado para ser fácil de executar localmente e pronto para empacotamento e deploy.
 
-### Visual Indicator
-A visible banner indicates when the application is running in demo mode.
+Como executar (desenvolvimento)
+--------------------------------
+1. Clone o repositório:
 
-## Available Scripts
+   git clone https://github.com/Raq-boop/spfx-pedidos-ferias.git
+   cd spfx-pedidos-ferias
+   npm install
 
-| Script | Description |
-|--------|-------------|
-| `npm test` | Run tests |
-| `npm run lint` | Validate code |
-| `npm run format` | Format code |
-| `npm run serve` | Start development server |
-| `npm run package` | Create production package |
+2. Inicie o servidor de desenvolvimento:
 
-## SharePoint Configuration
+   gulp serve
 
-1. The `PedidoFerias` list will be created automatically when deploying.
-2. Fields configured:
-   - Colaborador (Person/Group)
-   - Data Início/Fim (Date)
-   - Dias (Number)
-   - Estado (Choice)
-   - Observações (Multi-line text)
-   - Aprovador (Person/Group)
+3. Abra o workbench em: http://localhost:4321 (ou a página definida em `config/serve.json`).
 
-## Quality Metrics
+Build e empacotamento (produção)
+---------------------------------
+Para gerar o pacote SharePoint (.sppkg):
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| Test Coverage | 87% | Excellent |
-| Files Tested | 15+ | Complete |
-| ESLint Errors | 0 | Clean |
-| TypeScript Strict | Enabled | Type Safe |
-| Build Time | <2 min | Optimized |
-| Security Score | A+ | Enterprise |
-| Accessibility | WCAG 2.1 AA | Compliant |
-| Code Quality | 9.8/10 | Professional |
+1. Gerar bundle em modo 'ship':
 
-### Transformation Summary
-- BEFORE: 7.5/10 - Basic system
-- AFTER: 9.8/10 - Enterprise-grade solution
+   npx gulp bundle --ship
 
-## Contribution
+2. Gerar pacote de solução:
 
-1. Fork the project
-2. Create a feature branch (`git checkout -b feature/YourFeature`)
-3. Commit changes (`git commit -m 'Add feature'`)
-4. Push to branch (`git push origin feature/YourFeature`)
-5. Open a Pull Request
+   npx gulp package-solution --ship
 
-## License
+O pacote será criado em `sharepoint/solution/`.
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+Testes
+------
+Executar testes unitários:
 
-## Technical Highlights
+   npm test
 
-### Skills Demonstrated
+Gerar coverage:
+
+   npm run test:coverage
+
+Estrutura do repositório
+------------------------
+- src/: código-fonte (webparts, components, services, models)
+- config/: configurações de build e serve
+- sharepoint/solution/: saída do empacotamento (.sppkg)
+- scripts/: utilitários e automações
+
+Contribuição
+------------
+1. Fork
+2. Criar branch de feature
+3. Commit e push
+4. Abrir Pull Request
+
+Licença
+-------
+MIT
+
+Contato
+-------
+Issues do projeto: https://github.com/Raq-boop/spfx-pedidos-ferias/issues
+
+Status
+------
+Projeto simplificado para desenvolvimento local e empacotamento. Arquivos de build foram gerados localmente. Testes unitários estão passando.
 - SharePoint Framework: enterprise implementation
+
 - Security Engineering: automation and CI/CD scanning
-- Accessibility: WCAG 2.1 AA compliance
-- DevOps Automation: GitHub Actions
-- Clean Architecture: SOLID and separation of concerns
-
-### Differentiators
-- Enterprise services and automated security scanning
-- Documentation and professional code standards
-
-## Contact
-
-For technical discussions and opportunities:
-- Issues: [GitHub Issues](https://github.com/Raq-boop/spfx-pedidos-ferias/issues)
-- Documentation: [DOCUMENTACAO-TECNICA-COMPLETA.md](DOCUMENTACAO-TECNICA-COMPLETA.md)
-- Pipeline: [GitHub Actions](https://github.com/Raq-boop/spfx-pedidos-ferias/actions)
-
-## Project Status
-
-### READY FOR PRODUCTION
-- Build passing
-- Package .sppkg validated
-- Test coverage reported
-- Security scans completed
-- Accessibility compliance
-- Responsive design
-
----
-
-````
-

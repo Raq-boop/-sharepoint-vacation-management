@@ -121,6 +121,6 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          const status = '${{ needs.deploy-production.result }}' === 'success' ? '✅ Success' : '❌ Failed';
+          const status = '${{ needs.deploy-production.result }}' === 'success' ? 'Success' : 'Failed';
           console.log(`Deployment status: ${status}`);
           // Add Teams webhook notification here
