@@ -1,6 +1,6 @@
 <div align="center">
 
-# � Enterprise Vacation Management System
+#  Enterprise Vacation Management System
 ### *SharePoint Framework Solution with Intelligent Demo Mode*
 
 ---
@@ -9,10 +9,7 @@
 
 This isn't just another vacation request system. It's a **production-ready enterprise solution** that works **everywhere, instantly** - no complex setup required.
 
-```
- Clone → Install → Run → WORKS IN ANY BROWSER
-   Takes 2 minutes, works everywhere, looks professional
-```
+
 
 **The Smart Demo Feature:** Automatically detects when SharePoint isn't available and seamlessly switches to realistic demo data for seamless development and testing.
 
