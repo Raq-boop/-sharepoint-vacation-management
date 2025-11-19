@@ -1,15 +1,15 @@
 /**
- * 🎣 usePnP Hook - Hook React Enterprise para Integração SharePoint
+ * usePnP Hook - Hook React Enterprise para Integração SharePoint
  * 
  * Hook customizado que encapsula toda a lógica de inicialização
  * e gerenciamento do serviço PnP SharePoint:
  * 
  * Funcionalidades:
- * ✅ Inicialização assíncrona segura do PnPService
- * ✅ Estados de loading e error gerenciados
- * ✅ Cleanup automático no unmount
- * ✅ Reusabilidade em múltiplos componentes
- * ✅ Type safety completo com TypeScript
+ * - Inicialização assíncrona segura do PnPService
+ * - Estados de loading e error gerenciados
+ * - Cleanup automático no unmount
+ * - Reusabilidade em múltiplos componentes
+ * - Type safety completo com TypeScript
  * 
  * Padrões React:
  * - Custom hook pattern
@@ -25,7 +25,7 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { PnPService } from '../services/PnPService';
 
 /**
- * 📊 Interface para controle de estados de carregamento
+ * Interface para controle de estados de carregamento
  * Padroniza informações de loading e error para o hook
  */
 interface LoadingState {
@@ -34,7 +34,7 @@ interface LoadingState {
 }
 
 /**
- * 🎯 Hook personalizado para integração PnP SharePoint
+ * Hook personalizado para integração PnP SharePoint
  * Encapsula lógica complexa de inicialização em hook reutilizável
  */
 export const usePnP = (context: WebPartContext): {

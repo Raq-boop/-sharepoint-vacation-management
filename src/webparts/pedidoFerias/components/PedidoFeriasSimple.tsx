@@ -31,14 +31,14 @@ const PedidoFeriasSimple: React.FC<IPedidoFeriasSimpleProps> = ({
           Funcionalidades Implementadas:
         </Text>
         <ul>
-          <li>✅ Interfaces TypeScript completas para pedidos de férias</li>
-          <li>✅ Serviço PnP JS para operações CRUD no SharePoint</li>
-          <li>✅ Hook React para gerenciamento de estado</li>
-          <li>✅ Componente de listagem com filtros e ordenação</li>
-          <li>✅ People Picker para seleção de colaboradores</li>
-          <li>✅ Botões de aprovação/rejeição com modais</li>
-          <li>✅ Sistema de paginação e loading states</li>
-          <li>✅ Tratamento de erros e permissões</li>
+          <li>Interfaces TypeScript completas para pedidos de férias</li>
+          <li>Serviço PnP JS para operações CRUD no SharePoint</li>
+          <li>Hook React para gerenciamento de estado</li>
+          <li>Componente de listagem com filtros e ordenação</li>
+          <li>People Picker para seleção de colaboradores</li>
+          <li>Botões de aprovação/rejeição com modais</li>
+          <li>Sistema de paginação e loading states</li>
+          <li>Tratamento de erros e permissões</li>
         </ul>
       </Stack>
 
@@ -48,11 +48,11 @@ const PedidoFeriasSimple: React.FC<IPedidoFeriasSimpleProps> = ({
           Próximos Passos:
         </Text>
         <ul>
-          <li>🔧 Corrigir erros de compilação TypeScript restantes</li>
-          <li>📋 Criar lista &quot;Pedidos de Férias&quot; no SharePoint</li>
-          <li>🧪 Testar funcionalidades no ambiente SharePoint</li>
-          <li>🎨 Opcional: Integrar Microsoft Graph para fotos</li>
-          <li>🚀 Deploy para produção</li>
+          <li>Corrigir erros de compilação TypeScript restantes</li>
+          <li>Criar lista &quot;Pedidos de Férias&quot; no SharePoint</li>
+          <li>Testar funcionalidades no ambiente SharePoint</li>
+          <li>Opcional: Integrar Microsoft Graph para fotos</li>
+          <li>Deploy para produção</li>
         </ul>
       </Stack>
 

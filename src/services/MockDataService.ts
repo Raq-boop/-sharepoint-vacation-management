@@ -1,15 +1,15 @@
 /**
- * 🎭 MockDataService - Serviço de Dados de Exemplo
- * 
+ * MockDataService - Serviço de Dados de Exemplo
+ *
  * Fornece dados simulados para desenvolvimento e demonstração
  * quando não há conexão com SharePoint disponível.
- * 
+ *
  * Funcionalidades:
- * ✅ Dados realistas para demonstração
- * ✅ Simula latência de rede
- * ✅ Estados variados de pedidos
- * ✅ Persistência local via localStorage
- * 
+ * - Dados realistas para demonstração
+ * - Simula latência de rede
+ * - Estados variados de pedidos
+ * - Persistência local via localStorage
+ *
  * Cenários de Uso:
  * - Desenvolvimento local sem SharePoint
  * - Demonstrações e apresentações
@@ -18,7 +18,7 @@
  */
 import { IPedidoFerias, EstadoPedido } from '../models/IPedidoFerias';
 
-// 🎭 Dados de exemplo para demonstração
+// Dados de exemplo para demonstração
 const MOCK_PEDIDOS: IPedidoFerias[] = [
   {
     Id: 1,
@@ -177,7 +177,7 @@ const MOCK_PEDIDOS: IPedidoFerias[] = [
 ];
 
 /**
- * 🎭 Classe MockDataService
+ * Classe MockDataService
  * Simula operações do PnPService com dados de exemplo
  */
 export class MockDataService {
@@ -223,7 +223,7 @@ export class MockDataService {
   public static async getPedidosFerias(): Promise<IPedidoFerias[]> {
     await this.simulateNetworkDelay();
     const data = this.getData();
-    console.log('📊 MockDataService: Carregados', data.length, 'pedidos de exemplo');
+  console.log('MockDataService: Carregados', data.length, 'pedidos de exemplo');
     return data;
   }
 
@@ -255,7 +255,7 @@ export class MockDataService {
     data.push(newPedido);
     this.saveData(data);
     
-    console.log('✅ MockDataService: Pedido criado com ID', newId);
+  console.log('MockDataService: Pedido criado com ID', newId);
     return newId;
   }
 
@@ -289,7 +289,7 @@ export class MockDataService {
     };
     
     this.saveData(data);
-    console.log('🔄 MockDataService: Pedido', pedidoId, 'atualizado');
+  console.log('MockDataService: Pedido', pedidoId, 'atualizado');
   }
 
   /**
@@ -305,8 +305,8 @@ export class MockDataService {
       throw new Error(`Pedido com ID ${pedidoId} não encontrado`);
     }
     
-    this.saveData(filteredData);
-    console.log('🗑️ MockDataService: Pedido', pedidoId, 'removido');
+  this.saveData(filteredData);
+  console.log('MockDataService: Pedido', pedidoId, 'removido');
   }
 
   /**
@@ -314,7 +314,7 @@ export class MockDataService {
    */
   public static resetToDefault(): void {
     this.saveData([...MOCK_PEDIDOS]);
-    console.log('🔄 MockDataService: Dados resetados para o padrão');
+  console.log('MockDataService: Dados resetados para o padrão');
   }
 
   /**

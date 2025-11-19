@@ -118,11 +118,11 @@ const PnPExample: React.FC<IPedidoFeriasProps> = (props) => {
       <div style={{ marginTop: '30px', fontSize: '12px', color: '#666' }}>
         <h4>Status da Configuração PnP:</h4>
         <ul>
-          <li>✅ PnP Service inicializado: {pnpService ? 'Sim' : 'Não'}</li>
-          <li>✅ Contexto SPFx: {props.context ? 'Configurado' : 'Não configurado'}</li>
-          <li>✅ Logging configurado: Sim (nível Warning)</li>
-          <li>✅ Tratamento de erros: Implementado</li>
-          <li>✅ Estados de loading: Implementado</li>
+          <li>PnP Service inicializado: {pnpService ? 'Sim' : 'Não'}</li>
+          <li>Contexto SPFx: {props.context ? 'Configurado' : 'Não configurado'}</li>
+          <li>Logging configurado: Sim (nível Warning)</li>
+          <li>Tratamento de erros: Implementado</li>
+          <li>Estados de loading: Implementado</li>
         </ul>
       </div>
     </div>

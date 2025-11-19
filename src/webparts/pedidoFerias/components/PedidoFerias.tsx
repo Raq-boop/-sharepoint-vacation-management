@@ -1,21 +1,21 @@
 /**
- * 🏖️ Sistema Enterprise de Pedidos de Férias - Componente Principal
- * 
+ * Sistema Enterprise de Pedidos de Férias - Componente Principal
+ *
  * Componente React principal do sistema de gestão de férias corporativo.
- * Implementa funcionalidades enterprise completas:
- * 
- * 🚀 Funcionalidades Core:
+ * Implementa funcionalidades completas:
+ *
+ * Funcionalidades Core:
  * - CRUD completo de pedidos de férias
  * - Interface responsiva e acessível (WCAG 2.1 AA)
  * - Validação avançada de formulários
  * - Estados de carregamento e erro otimizados
- * 
- * 🔧 Serviços Enterprise Integrados:
+ *
+ * Serviços Enterprise Integrados:
  * - TelemetryService: Monitoramento e métricas
  * - AccessibilityService: Conformidade WCAG 2.1
- * - PnPService: Integração SharePoint robusta
- * 
- * 🎯 Padrões Implementados:
+ * - PnPService: Integração SharePoint
+ *
+ * Padrões Implementados:
  * - React Hooks para gerenciamento de estado
  * - TypeScript strict para type safety
  * - Error boundaries e tratamento de exceções
@@ -35,7 +35,7 @@ import { Dialog, DialogType, DialogFooter } from '@fluentui/react/lib/Dialog';
 import { TextField } from '@fluentui/react/lib/TextField';
 
 /**
- * 🔍 Interface para controle de filtros avançados
+ * Interface para controle de filtros avançados
  * Permite pesquisa e filtragem granular dos pedidos
  */
 interface IFilterState {
@@ -46,7 +46,7 @@ interface IFilterState {
 }
 
 /**
- * ⚠️ Interface para gerenciamento centralizado de erros
+ * Interface para gerenciamento centralizado de erros
  * Padroniza exibição de mensagens para o usuário
  */
 interface IErrorState {
@@ -56,7 +56,7 @@ interface IErrorState {
 }
 
 /**
- * 💬 Interface para controle de diálogos de confirmação
+ * Interface para controle de diálogos de confirmação
  * Gerencia workflows de aprovação/rejeição/reversão
  */
 interface IDialogState {
@@ -68,21 +68,21 @@ interface IDialogState {
 }
 
 /**
- * 🏗️ Componente Principal - Sistema de Pedidos de Férias
- * 
+ * Componente Principal - Sistema de Pedidos de Férias
+ *
  * @param props - Propriedades do componente incluindo contexto SPFx
  * @returns JSX.Element - Interface completa do sistema
- */
+ * */
 
 const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
   // Controle manual de demo (apenas para desenvolvedores).
   // Defina true localmente caso precise forçar dados de exemplo para desenvolvimento.
   const ALLOW_DEMO = false;
-  // 🔧 Inicialização dos serviços enterprise avançados
+  // Inicialização dos serviços enterprise avançados
   // Serviços centralizados para observabilidade e acessibilidade
   // Removed telemetry and accessibility initialization to simplify project
-  
-  // 📊 Estados principais do componente
+
+  // Estados principais do componente
   // Gerenciamento centralizado de estado com TypeScript strict
   const [pedidos, setPedidos] = useState<IPedidoFerias[]>([]);          // Lista de pedidos carregados
   const [loading, setLoading] = useState<boolean>(true);                // Estado de carregamento inicial
@@ -297,7 +297,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
       setLoading(true);
       setError({ show: false, message: '', type: MessageBarType.error });
       
-      console.log('🔄 Carregando pedidos de férias do SharePoint...');
+    console.log('Carregando pedidos de férias do SharePoint...');
       
       // Tentar carregar dados reais do SharePoint
       const data = await pnpService.getPedidosFerias();
@@ -309,19 +309,19 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
       setIsUsingMockData(usingMockData);
       
       if (data && data.length > 0) {
-        console.log(`✅ ${data.length} pedidos carregados:`, data);
+  console.log(`${data.length} pedidos carregados:`, data);
         setPedidos(data);
         
         if (usingMockData) {
           setError({
             show: true,
-            message: '⚠️ Não foi possível conectar ao SharePoint. Usando dados de exemplo para demonstração.',
+            message: 'Não foi possível conectar ao SharePoint. Usando dados de exemplo para demonstração.',
             type: MessageBarType.warning
           });
         } else {
           setError({
             show: true,
-            message: `✅ ${data.length} pedidos carregados do SharePoint com sucesso!`,
+            message: `${data.length} pedidos carregados do SharePoint com sucesso!`,
             type: MessageBarType.success
           });
           
@@ -331,7 +331,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
           }, 3000);
         }
       } else {
-        console.log('📝 Nenhum pedido encontrado. Não será usado mock automaticamente.');
+      console.log('Nenhum pedido encontrado. Não será usado mock automaticamente.');
         // Não usar dados de exemplo automaticamente em produção.
         setPedidos([]);
         setError({
@@ -343,14 +343,14 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
       }
       
     } catch (err) {
-      console.error('❌ Erro ao carregar pedidos do SharePoint:', err);
+  console.error('Erro ao carregar pedidos do SharePoint:', err);
       
   // Em erro, não usar dados mock automaticamente em produção.
   // Para desenvolvimento, altere ALLOW_DEMO para true ou ative manualmente no PnPService.
   setPedidos([]);
       
       // Mostrar erro específico baseado no tipo
-      let errorMessage = '⚠️ Não foi possível conectar ao SharePoint. ';
+  let errorMessage = 'Não foi possível conectar ao SharePoint. ';
       
       if (err instanceof Error) {
         if (err.message.indexOf('401') !== -1 || err.message.indexOf('unauthorized') !== -1) {
@@ -384,13 +384,13 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
       const pedido = pedidos.filter((p: IPedidoFerias) => p.Id === id)[0];
       const pedidoNome = pedido ? pedido.Colaborador.Title : 'colaborador';
       
-      console.log(`🔄 Aprovando pedido de ${pedidoNome}...`);
+  console.log(`Aprovando pedido de ${pedidoNome}...`);
       
       // Tentar aprovação real no SharePoint
       const success = await pnpService.aprovaPedido(id, props.userDisplayName || 'Gestor');
       
       if (success) {
-        console.log(`✅ Pedido ${id} aprovado no SharePoint`);
+  console.log(`Pedido ${id} aprovado no SharePoint`);
         
         // Atualizar estado local
         setPedidos(prev => prev.map(p => 
@@ -406,7 +406,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
         
         setError({
           show: true,
-          message: `✅ Pedido de ${pedidoNome} aprovado com sucesso no SharePoint!`,
+          message: `Pedido de ${pedidoNome} aprovado com sucesso no SharePoint!`,
           type: MessageBarType.success
         });
         
@@ -425,7 +425,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
       }, 4000);
       
     } catch (error) {
-      console.error('❌ Erro ao aprovar pedido:', error);
+  console.error('Erro ao aprovar pedido:', error);
       
       // Fallback: aprovar localmente se SharePoint falhar
       const pedido = pedidos.filter((p: IPedidoFerias) => p.Id === id)[0];
@@ -444,7 +444,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
       
       setError({
         show: true,
-        message: `⚠️ Pedido de ${pedidoNome} aprovado localmente. SharePoint pode não estar sincronizado.`,
+  message: `Pedido de ${pedidoNome} aprovado localmente. SharePoint pode não estar sincronizado.`,
         type: MessageBarType.warning
       });
     } finally {
@@ -457,7 +457,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
     if (!motivo.trim()) {
       setError({
         show: true,
-        message: '⚠️ Motivo da rejeição é obrigatório.',
+  message: 'Motivo da rejeição é obrigatório.',
         type: MessageBarType.warning
       });
       return;
@@ -469,13 +469,13 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
       const pedido = pedidos.filter((p: IPedidoFerias) => p.Id === id)[0];
       const pedidoNome = pedido ? pedido.Colaborador.Title : 'colaborador';
       
-      console.log(`🔄 Rejeitando pedido de ${pedidoNome}...`);
+  console.log(`Rejeitando pedido de ${pedidoNome}...`);
       
       // Tentar rejeição real no SharePoint
       const success = await pnpService.rejeitaPedido(id, props.userDisplayName || 'Gestor', motivo);
       
       if (success) {
-        console.log(`✅ Pedido ${id} rejeitado no SharePoint`);
+  console.log(`Pedido ${id} rejeitado no SharePoint`);
         
         // Atualizar estado local
         setPedidos(prev => prev.map(p => 
@@ -492,7 +492,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
         
         setError({
           show: true,
-          message: `✅ Pedido de ${pedidoNome} rejeitado com sucesso no SharePoint!`,
+          message: `Pedido de ${pedidoNome} rejeitado com sucesso no SharePoint!`,
           type: MessageBarType.success
         });
         
@@ -511,7 +511,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
       }, 4000);
       
     } catch (error) {
-      console.error('❌ Erro ao rejeitar pedido:', error);
+  console.error('Erro ao rejeitar pedido:', error);
       
       // Fallback: rejeitar localmente se SharePoint falhar
       const pedido = pedidos.filter((p: IPedidoFerias) => p.Id === id)[0];
@@ -531,7 +531,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
       
       setError({
         show: true,
-        message: `⚠️ Pedido de ${pedidoNome} rejeitado localmente. SharePoint pode não estar sincronizado.`,
+  message: `Pedido de ${pedidoNome} rejeitado localmente. SharePoint pode não estar sincronizado.`,
         type: MessageBarType.warning
       });
     } finally {
@@ -540,14 +540,14 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
   }, [pnpService, props.userDisplayName, pedidos, loadPedidos]);
 
   /**
-   * 🔄 Reverte status de pedido para Pendente
+  * Reverte status de pedido para Pendente
    * Permite correção de decisões de aprovação/rejeição
    * 
    * @param id - ID do pedido a ser revertido
    * @param currentStatus - Status atual do pedido
    */
   const handleRevert = useCallback(async (id: number, currentStatus: string) => {
-    // 🔧 Validação de segurança
+  // Validação de segurança
     if (!id || (currentStatus !== 'Aprovado' && currentStatus !== 'Rejeitado')) {
       setError({
         show: true,
@@ -560,10 +560,10 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
     setProcessing(true);
     
     try {
-  // 📊 Telemetria para rastreamento de reversões
+  // Telemetria para rastreamento de reversões
   // telemetry removed: PedidoReversao event omitted in simplified build
 
-      // 🔄 Reverter status no SharePoint
+  // Reverter status no SharePoint
       await pnpService.updateListItem('PedidoFerias', id, {
         Estado: EstadoPedido.Pendente,
         AprovadoPor: '', // Limpar aprovador
@@ -571,7 +571,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
         DataAprovacao: undefined // Limpar data de aprovação
       });
 
-      // 🔄 Atualizar lista local
+  // Atualizar lista local
       setPedidos(prev => prev.map(p => {
         if (p.Id === id) {
           return {
@@ -585,18 +585,18 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
         return p;
       }));
 
-      // ✅ Feedback de sucesso
+  // Feedback de sucesso
       setError({
         show: true,
         message: `Pedido revertido para Pendente com sucesso! Status anterior: ${currentStatus}`,
         type: MessageBarType.success
       });
 
-      // 📊 Log de auditoria
-      console.log(`🔄 Pedido ${id} revertido de ${currentStatus} para Pendente`);
+  // Log de auditoria
+  console.log(`Pedido ${id} revertido de ${currentStatus} para Pendente`);
       
     } catch (error) {
-      // ❌ Tratamento de erro
+  // Tratamento de erro
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido ao reverter pedido';
       
       setError({
@@ -605,10 +605,10 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
         type: MessageBarType.error
       });
 
-      // 📊 Telemetria de erro
+  // Telemetria de erro
   // telemetry removed: exception tracking omitted in simplified build
       
-      console.error('❌ Erro ao reverter pedido:', error);
+  console.error('Erro ao reverter pedido:', error);
     } finally {
       setProcessing(false);
       setDialog({ show: false, type: 'approve', pedidoId: undefined, rejectionReason: '', currentStatus: '' });
@@ -800,7 +800,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
               </select>
             </div>
             <div className={styles.filterGroup}>
-              <label htmlFor="status-filter">📊 Status:</label>
+              <label htmlFor="status-filter">Status:</label>
               <select 
                 id="status-filter"
                 className={styles.statusFilter}
@@ -825,7 +825,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
 
         <div className={styles.requestsList}>
           <div className={styles.listHeader}>
-            <span className={styles.listIcon}>📋</span>
+            <span className={styles.listIcon}>Lista</span>
             <h3>Pedidos de Férias ({filteredAndSortedPedidos.length} itens)</h3>
             <div className={styles.sortControls}>
               <label htmlFor="sort-select">Ordenar por:</label>
@@ -912,7 +912,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
                   </div>
                   {pedido.Estado === EstadoPedido.Rejeitado && pedido.Observacoes && (
                     <div className={styles.rejectionReason}>
-                      <span className={styles.reasonIcon}>❌</span>
+                      <span className={styles.reasonIcon}>Erro</span>
                       <span>Motivo da rejeição: {pedido.Observacoes}</span>
                     </div>
                   )}
@@ -925,14 +925,14 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
                           disabled={isProcessingThis}
                           onClick={() => openApproveDialog(pedido.Id)}
                         >
-                          {isProcessingThis && dialog.type === 'approve' ? '⏳ Aprovando...' : '✓ Aprovar'}
+                          {isProcessingThis && dialog.type === 'approve' ? 'Aprovando...' : 'Aprovar'}
                         </button>
                         <button 
                           className={styles.rejectBtn} 
                           disabled={isProcessingThis}
                           onClick={() => openRejectDialog(pedido.Id)}
                         >
-                          {isProcessingThis && dialog.type === 'reject' ? '⏳ Rejeitando...' : '✗ Rejeitar'}
+                          {isProcessingThis && dialog.type === 'reject' ? 'Rejeitando...' : 'Rejeitar'}
                         </button>
                       </>
                     )}
@@ -945,7 +945,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
                         onClick={() => openRevertDialog(pedido.Id, pedido.Estado)}
                         title={`Reverter de ${pedido.Estado} para Pendente`}
                       >
-                        {isProcessingThis && dialog.type === 'revert' ? '⏳ Revertendo...' : '🔄 Reverter para Pendente'}
+                        {isProcessingThis && dialog.type === 'revert' ? 'Revertendo...' : 'Reverter para Pendente'}
                       </button>
                     )}
                     
@@ -998,7 +998,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
               marginTop: '16px'
             }}>
               <p style={{ margin: 0, color: '#d83b01' }}>
-                <strong>⚠️ Atenção:</strong> Esta ação irá reverter o pedido para status Pendente, 
+                <strong>Atenção:</strong> Esta ação irá reverter o pedido para status Pendente, 
                 removendo a decisão anterior de {dialog.currentStatus.toLowerCase()}. 
                 O pedido poderá ser aprovado ou rejeitado novamente.
               </p>
@@ -1032,7 +1032,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
           {selectedPedido && (
             <div className={styles.detailsContent}>
               <div className={styles.detailsSection}>
-                <h3>📋 Informações Gerais</h3>
+                <h3>Informações Gerais</h3>
                 <div className={styles.detailsGrid}>
                   <div className={styles.detailsItem}>
                     <strong>ID do Pedido:</strong>
@@ -1096,7 +1096,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
               )}
 
               <div className={styles.detailsSection}>
-                <h3>📊 Informações do Sistema</h3>
+                <h3>Informações do Sistema</h3>
                 <div className={styles.detailsGrid}>
                   <div className={styles.detailsItem}>
                     <strong>Data de Criação:</strong>
