@@ -3,17 +3,6 @@
 # � Enterprise Vacation Management System
 ### *SharePoint Framework Solution with Intelligent Demo Mode*
 
-![SPFx](https://img.shields.io/badge/SPFx-1.21.1-0078d4?style=for-the-badge&logo=microsoft)
-![React](https://img.shields.io/badge/React-17.0.1-61dafb?style=for-the-badge&logo=react&logoColor=black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.3.3-3178c6?style=for-the-badge&logo=typescript&logoColor=white)
-![Quality](https://img.shields.io/badge/Quality-9.8★-gold?style=for-the-badge)
-
-<img src="https://img.shields.io/badge/_Cross_Browser-Universal-brightgreen?style=for-the-badge" />
-<img src="https://img.shields.io/badge/_Demo_Mode-Ready-orange?style=for-the-badge" />
-<img src="https://img.shields.io/badge/_WCAG_2.1-AA_Compliant-blue?style=for-the-badge" />
-
-</div>
-
 ---
 
 ##  **What Makes This Special**
@@ -21,7 +10,7 @@
 This isn't just another vacation request system. It's a **production-ready enterprise solution** that works **everywhere, instantly** - no complex setup required.
 
 ```
-🚀 Clone → Install → Run → WORKS IN ANY BROWSER
+ Clone → Install → Run → WORKS IN ANY BROWSER
    Takes 2 minutes, works everywhere, looks professional
 ```
 
@@ -57,7 +46,7 @@ This isn't just another vacation request system. It's a **production-ready enter
 - **Progressive enhancement** architecture
 - **Zero browser restrictions**
 
-### � **Enterprise Architecture**
+###  **Enterprise Architecture**
 - **4 custom services** for scalability
 - **87% test coverage** with Jest
 - **Zero security vulnerabilities**
@@ -136,11 +125,6 @@ Quality:         ESLint + Prettier + TypeScript Strict Mode
 
 > *Desenvolvido com paixão, expertise técnica e commitment com qualidade. Este projeto representa a evolução de um sistema básico para uma solução enterprise completa, demonstrando capacidade de arquitetura, segurança, performance e user experience.*
 
-- ✅ **Build Status:** Passing (automated tests)
-- ✅ **Security Scan:** Clean (no vulnerabilities)  
-- ✅ **Package Ready:** .sppkg enterprise-grade
-- ✅ **Documentation:** Complete technical specs
-- ✅ **Code Quality:** 9.8/10 professional standard
 
 ---
 
