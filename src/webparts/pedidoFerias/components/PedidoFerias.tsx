@@ -94,7 +94,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
     type: MessageBarType.error 
   });
   
-  // 🔍 Estados de filtros e pesquisa avançada
+  // Estados de filtros e pesquisa avançada
   const [filters, setFilters] = useState<IFilterState>({
     colaborador: '',
     status: '',
@@ -777,11 +777,11 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
         )}
 
         <div className={styles.filterSection}>
-          <div className={styles.filterIcon}>🔍</div>
+          <div className={styles.filterIcon}>Buscar</div>
           <h3>Filtros</h3>
           <div className={styles.filterControls}>
             <div className={styles.filterGroup}>
-              <label htmlFor="colaborador-filter">👤 Colaborador:</label>
+              <label htmlFor="colaborador-filter">Colaborador:</label>
               <select 
                 id="colaborador-filter"
                 className={styles.peoplePickerSim}
@@ -816,7 +816,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
             <input 
               type="text" 
               className={styles.searchInput}
-              placeholder="🔍 Buscar por motivo..."
+              placeholder="Buscar por motivo..."
               value={filters.searchTerm}
               onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
             />
@@ -894,7 +894,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
                   </div>
                   <div className={styles.requestMeta}>
                     <span className={styles.requestDate}>
-                      📅 Solicitado em: {formatDate(new Date(pedido.DataSolicitacao))}
+                      Solicitado em: {formatDate(new Date(pedido.DataSolicitacao))}
                     </span>
                     <span className={`${styles.statusBadge} ${getStatusBadgeClass(pedido.Estado)}`}>
                       {pedido.Estado.toUpperCase()}
@@ -903,11 +903,11 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
                 </div>
                 <div className={styles.requestBody}>
                   <div className={styles.vacationPeriod}>
-                    <span className={styles.periodIcon}>📅</span>
+                    <span className={styles.periodIcon}>Período</span>
                     <span>{formatDateRange(new Date(pedido.DataInicio), new Date(pedido.DataFim), pedido.DiasTotal)}</span>
                   </div>
                   <div className={styles.vacationReason}>
-                    <span className={styles.reasonIcon}>💬</span>
+                    <span className={styles.reasonIcon}>Motivo</span>
                     <span>&quot;{pedido.Motivo}&quot;</span>
                   </div>
                   {pedido.Estado === EstadoPedido.Rejeitado && pedido.Observacoes && (
@@ -954,7 +954,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
                       onClick={() => openDetails(pedido)}
                       title="Ver detalhes do pedido"
                     >
-                      👁 Detalhes
+                      Detalhes
                     </button>
                   </div>
                 </div>
@@ -1023,7 +1023,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
           onDismiss={closeDetails}
           dialogContentProps={{
             type: DialogType.largeHeader,
-            title: '👁 Detalhes do Pedido de Férias',
+            title: 'Detalhes do Pedido de Férias',
             subText: selectedPedido ? `Informações completas do pedido #${selectedPedido.Id}` : ''
           }}
           minWidth={600}
@@ -1056,7 +1056,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
               </div>
 
               <div className={styles.detailsSection}>
-                <h3>📅 Período de Férias</h3>
+                <h3>Período de Férias</h3>
                 <div className={styles.detailsGrid}>
                   <div className={styles.detailsItem}>
                     <strong>Data de Início:</strong>
@@ -1079,7 +1079,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
 
               {selectedPedido.Motivo && (
                 <div className={styles.detailsSection}>
-                  <h3>📝 Motivo/Justificativa</h3>
+                  <h3>Motivo/Justificativa</h3>
                   <div className={styles.observacoes}>
                     {selectedPedido.Motivo}
                   </div>
@@ -1088,7 +1088,7 @@ const PedidoFerias: React.FC<IPedidoFeriasProps> = (props) => {
 
               {selectedPedido.Observacoes && (
                 <div className={styles.detailsSection}>
-                  <h3>💬 Observações</h3>
+                  <h3>Observações</h3>
                   <div className={styles.observacoes}>
                     {selectedPedido.Observacoes}
                   </div>
