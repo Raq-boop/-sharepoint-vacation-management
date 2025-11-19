@@ -51,3 +51,9 @@ coverage-audit.json
 
 # Local archive folder (kept for reference) - ignore by git
 /ops/
+
+# Ignore generated SPFx build artifacts (kept .sppkg if needed)
+/release/
+/lib/
+/sharepoint/solution/debug/
+/sharepoint/solution/debug/**
